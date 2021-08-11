@@ -1,0 +1,5 @@
+/vendor
+/storage/images/adverts/*
+/storage/images/cache/*
+/storage/images/profile/*
+.env

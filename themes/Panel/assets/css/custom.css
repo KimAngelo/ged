@@ -1,0 +1,65 @@
+a:hover {
+    color: #9466FF;
+}
+
+.btn-theme {
+    color: #ffffff;
+    background-color: #9466FF;
+}
+
+.btn.btn-outline-theme {
+    color: #9466FF;
+    background-color: transparent;
+    border-color: #9466FF;
+}
+
+.btn.btn-outline-theme i {
+    color: #9466FF;
+}
+
+.alert-custom i {
+    font-size: 20px !important;
+    color: #9466FF !important;
+}
+
+.alert.alert-custom {
+    padding: 1.5rem 1.5rem;
+}
+
+.form-group label {
+    font-weight: 600;
+}
+
+.form-control {
+    border: 1px solid #777779;
+}
+
+.alert i {
+    color: #ffffff;
+}
+
+.paginator {
+    display: inline-block;
+}
+
+.paginator a, .paginator_active {
+    color: white;
+    background-color: #9466FF;
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.paginator_active {
+    color: #9466FF;
+    background-color: white;
+    border: 1px solid #9466FF;
+}
+
+.paginator a:hover {
+    color: #9466FF;
+    background-color: white;
+    border: 1px solid #9466FF;
+}
