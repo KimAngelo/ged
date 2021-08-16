@@ -13,16 +13,15 @@ class View
     /** @var Engine */
     private $engine;
 
-    private $cache;
-
     /**
      * View constructor.
      * @param string $path
      * @param string $ext
      */
-    public function __construct(string $path = CONF_VIEW_PATH, string $ext = CONF_VIEW_EXT)
+    public function __construct($router, string $path = CONF_VIEW_PATH, string $ext = CONF_VIEW_EXT)
     {
         $this->engine = Engine::create($path, $ext);
+        $this->engine->addData(['router' => $router]);
     }
 
     /**

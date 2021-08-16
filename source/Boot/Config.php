@@ -93,8 +93,8 @@ define("CONF_PASSWD_OPTION", ["cost" => 10]);
  */
 define("CONF_VIEW_PATH", __DIR__ . "/../../shared/views");
 define("CONF_VIEW_EXT", "php");
-define("CONF_VIEW_THEME", "web");
-define("CONF_VIEW_APP", "app");
+define("CONF_VIEW_THEME", "base");
+define("CONF_VIEW_APP", "base");
 define("CONF_VIEW_PANEL", "panel");
 
 /**

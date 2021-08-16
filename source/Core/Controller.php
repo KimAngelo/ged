@@ -4,6 +4,7 @@
 namespace Source\Core;
 
 
+use CoffeeCode\Router\Router;
 use Source\Support\Message;
 use Source\Support\Seo;
 
@@ -28,15 +29,19 @@ class Controller
      */
     protected $message;
 
+    /** @var Router */
+    protected $router;
+
     /**
      * Controller constructor.
      * @param null $pathToViews
      */
-    public function __construct($pathToViews = null)
+    public function __construct($router, $pathToViews = null)
     {
-        $this->view = new View($pathToViews);
+        $this->view = new View($router, $pathToViews);
         $this->seo = new Seo();
         $this->message = new Message();
+        $this->router = $router;
     }
 
 }
