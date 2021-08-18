@@ -26,7 +26,6 @@ class App extends Controller
      */
     public function search(?array $data): void
     {
-
         $head = $this->seo->render(
             "Procurar | " . CONF_SITE_NAME,
             CONF_SITE_DESC,

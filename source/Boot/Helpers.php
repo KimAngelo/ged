@@ -441,14 +441,17 @@ function str_limit_chars(string $string, int $limit, string $pointer = "..."): s
 function menu_active(string $router = null)
 {
 
-    if (strpos(url(), 'localhost')) {
+    /*if (strpos(url(), 'localhost')) {
         //Pega a URI do localhost para ser dinâmico
         $explode_local = explode('localhost', CONF_URL_TEST);
         $uri = url(str_replace($explode_local[1] . '/', '', $_SERVER['REQUEST_URI']));
     } else {
         $uri = url($_SERVER['REQUEST_URI']);
     }
-    return $uri == $router ? "active menu-item-active" : "";
+    return $uri == $router ? "active menu-item-active" : "";*/
+    $url = url($_GET['route'] ?? "");
+    return $url == $router ? "active menu-item-active" : "";
+
 }
 
 /**

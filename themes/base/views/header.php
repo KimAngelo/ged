@@ -42,12 +42,12 @@
                         <a href="#" class="nav-link py-4 px-6
                         <?= menu_active($router->route('admin.indexar')) ?>
                         <?= menu_active($router->route('admin.companies')) ?>
-                        <?= menu_active($router->route('admin.updateCompany')) ?>
+                        <?= menu_active($router->route('admin.updateCompany', ['id' => $_ENV['id_company'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.createCompany')) ?>
                         <?= menu_active($router->route('admin.deleteCompany')) ?>
                         <?= menu_active($router->route('admin.users')) ?>
                         <?= menu_active($router->route('admin.createUser')) ?>
-                        <?= menu_active($router->route('admin.updateUser')) ?>
+                        <?= menu_active($router->route('admin.updateUser', ['id' => $_ENV['id_user'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.deleteUser')) ?>"
                            data-toggle="tab"
                            data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
@@ -113,12 +113,12 @@
                         <a href="#" class="nav-link btn btn-clean
                         <?= menu_active($router->route('admin.indexar')) ?>
                         <?= menu_active($router->route('admin.companies')) ?>
-                        <?= menu_active($router->route('admin.updateCompany')) ?>
+                        <?= menu_active($router->route('admin.updateCompany', ['id' => $_ENV['id_company'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.createCompany')) ?>
                         <?= menu_active($router->route('admin.deleteCompany')) ?>
                         <?= menu_active($router->route('admin.users')) ?>
                         <?= menu_active($router->route('admin.createUser')) ?>
-                        <?= menu_active($router->route('admin.updateUser')) ?>
+                        <?= menu_active($router->route('admin.updateUser', ['id' => $_ENV['id_user'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.deleteUser')) ?>"
                            data-toggle="tab"
                            data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
@@ -192,29 +192,32 @@
                     <div class="tab-pane p-5 p-lg-0 justify-content-between
                         <?= menu_active($router->route('admin.indexar')) ?>
                         <?= menu_active($router->route('admin.companies')) ?>
-                        <?= menu_active($router->route('admin.updateCompany')) ?>
+                        <?= menu_active($router->route('admin.updateCompany', ['id' => $_ENV['id_company'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.createCompany')) ?>
                         <?= menu_active($router->route('admin.deleteCompany')) ?>
                         <?= menu_active($router->route('admin.users')) ?>
                         <?= menu_active($router->route('admin.createUser')) ?>
-                        <?= menu_active($router->route('admin.updateUser')) ?>
+                        <?= menu_active($router->route('admin.updateUser', ['id' => $_ENV['id_user'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.deleteUser')) ?>"
                          id="kt_header_tab_admin">
                         <div id="kt_header_menu"
                              class="header-menu header-menu-mobile header-menu-layout-default">
                             <!--begin::Nav-->
                             <ul class="menu-nav">
-                                <li class="menu-item <?= menu_active($router->route('admin.indexar')) ?>" aria-haspopup="true">
+                                <li class="menu-item <?= menu_active($router->route('admin.indexar')) ?>"
+                                    aria-haspopup="true">
                                     <a href="<?= $router->route('admin.indexar') ?>" class="menu-link">
                                         <span class="menu-text">Indexação</span>
                                     </a>
                                 </li>
-                                <li class="menu-item <?= menu_active($router->route('admin.companies')) ?>" aria-haspopup="true">
+                                <li class="menu-item <?= menu_active($router->route('admin.companies')) ?>"
+                                    aria-haspopup="true">
                                     <a href="<?= $router->route('admin.companies') ?>" class="menu-link">
                                         <span class="menu-text">Empresas</span>
                                     </a>
                                 </li>
-                                <li class="menu-item <?= menu_active($router->route('admin.users')) ?>" aria-haspopup="true">
+                                <li class="menu-item <?= menu_active($router->route('admin.users')) ?>"
+                                    aria-haspopup="true">
                                     <a href="<?= $router->route('admin.users') ?>" class="menu-link">
                                         <span class="menu-text">Usuários</span>
                                     </a>
