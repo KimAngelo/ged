@@ -17,10 +17,8 @@ $router->namespace("Source\Controller");
 $router->group(null);
 $router->get("/", "App:search", "app.search");
 $router->get("/monitoramento", "App:monitoring", "app.monitoring");
-
-//Selecionar empresa
-$router->get("/empresa", "App:company", "app.company");
-$router->post("/empresa", "App:company", "app.company");
+$router->get("/alterar-senha", "App:updatePassword", "app.updatePass");
+$router->post("/alterar-senha", "App:updatePassword", "app.update_password");
 
 //PESQUISAS
 $router->get("/despesas", "App:expenses", "app.expenses");
@@ -49,6 +47,10 @@ $router->get("/recuperar", "Auth:recover", "auth.recover");
 $router->post("/recuperar", "Auth:recover", "auth.recover");
 $router->get("/sair", "Auth:logout", "auth.logout");
 
+//Selecionar empresa
+$router->get("/empresa", "Auth:company", "auth.company");
+$router->post("/empresa", "Auth:company", "auth.company");
+
 
 /**
  * Admin
@@ -74,7 +76,7 @@ $router->post("/usuario/excluir", "Admin:deleteUser", "admin.deleteUser");
  * ERROR ROUTES
  */
 $router->group("/ops");
-$router->get("/{errcode}", "App:error");
+$router->get("/{errcode}", "App:error", "app.error");
 
 /**
  * ROUTE

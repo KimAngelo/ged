@@ -29,6 +29,16 @@
     border: none !important;
 }
 
+.color-theme,
+.color-theme-hover:hover {
+    color: var(--theme-color) !important;
+}
+
+.color-theme-secondary,
+.color-theme-secondary:hover {
+    color: var(--theme-color-secondary)!important;
+}
+
 /*DEFAULT LOAD*/
 .ajax_load {
     display: none;

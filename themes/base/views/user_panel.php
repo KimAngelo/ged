@@ -37,7 +37,8 @@
                             <span class="navi-text text-muted text-hover-primary">kim@kimangelo.me</span>
                         </span>
                     </a>
-                    <a href="#" class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5">Sair</a>
+                    <a href="<?= $router->route('auth.logout') ?>"
+                       class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5">Sair</a>
                 </div>
             </div>
         </div>
@@ -48,7 +49,7 @@
         <!--begin::Nav-->
         <div class="navi navi-spacer-x-0 p-0">
             <!--begin::Item-->
-            <a href="custom/apps/user/profile-1/personal-information.html" class="navi-item">
+            <a href="<?= $router->route('auth.company') ?>" class="navi-item">
                 <div class="navi-link">
                     <div class="symbol symbol-40 bg-light mr-3">
                         <div class="symbol-label">
@@ -77,7 +78,7 @@
             </a>
             <!--end:Item-->
             <!--begin::Item-->
-            <a href="#" class="navi-item">
+            <a href="<?= $router->route('app.update_password') ?>" class="navi-item">
                 <div class="navi-link">
                     <div class="symbol symbol-40 bg-light mr-3">
                         <div class="symbol-label">

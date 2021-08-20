@@ -59,6 +59,25 @@ class App extends Controller
 
     /**
      * @param array|null $data
+     * Controlador para alterar senha do usuário
+     */
+    public function updatePassword(?array $data): void
+    {
+        $head = $this->seo->render(
+            "Alterar minha senha | " . CONF_SITE_NAME,
+            CONF_SITE_DESC,
+            $this->router->route("app.update_password"),
+            image(CONF_SITE_SHARE, 1200, 630, CONF_UPLOAD_IMAGE_DIR_SITE),
+            false
+        );
+
+        echo $this->view->render("updatePassword", [
+            "head" => $head,
+        ]);
+    }
+
+    /**
+     * @param array|null $data
      */
     public function expenses(? array $data): void
     {
@@ -162,6 +181,26 @@ class App extends Controller
 
         echo $this->view->render("convention", [
             "head" => $head,
+        ]);
+    }
+
+    /**
+     * @param array|null $data
+     * Controlador de erro
+     */
+    public function error(?array $data): void
+    {
+        $head = $this->seo->render(
+            "Oops {$data['errcode']} | " . CONF_SITE_NAME,
+            CONF_SITE_DESC,
+            $this->router->route("app.error", ["errcode" => $data['errcode']]),
+            image(CONF_SITE_SHARE, 1200, 630, CONF_UPLOAD_IMAGE_DIR_SITE),
+            false
+        );
+
+        echo $this->view->render("error", [
+            "head" => $head,
+            "errcode" => $data['errcode']
         ]);
     }
 }
