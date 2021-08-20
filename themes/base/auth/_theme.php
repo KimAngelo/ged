@@ -16,6 +16,11 @@
     <?= css_version_control('style', CONF_VIEW_APP) ?>
     <link href="<?= theme("assets/css/custom.css") ?>" rel="stylesheet" type="text/css"/>
 
+    <meta name="theme-color" content="#0881B7">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="#0881B7">
+    <meta name="msapplication-navbutton-color" content="#0881B7">
+
     <link rel="shortcut icon" href="<?= theme('assets/media/logos/favicon.ico') ?>"/>
     <script>var BASE_SITE = '<?= url(); ?>';</script>
 </head>
