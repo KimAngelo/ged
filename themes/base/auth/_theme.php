@@ -16,7 +16,7 @@
     <?= css_version_control('style', CONF_VIEW_APP) ?>
     <link href="<?= theme("assets/css/custom.css") ?>" rel="stylesheet" type="text/css"/>
 
-    <link rel="shortcut icon" href="<?= theme('assets/media/logos/favicon.ico') ?>"/>
+    <link rel="shortcut icon" href="<?= url('storage/images/site/icon.ico') ?>"/>
     <script>var BASE_SITE = '<?= url(); ?>';</script>
 </head>
 <!--end::Head-->

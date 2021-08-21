@@ -6,7 +6,7 @@
     <meta charset="utf-8"/>
     <?= $head ?>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-    <link rel="shortcut icon" href="<?= theme('assets/media/logos/favicon.ico') ?>"/>
+    <link rel="shortcut icon" href="<?= url('storage/images/site/icon.ico') ?>"/>
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700"/>
 
