@@ -23,6 +23,13 @@
 <!--begin::Body-->
 <body id="kt_body" class="header-fixed header-mobile-fixed header-bottom-enabled subheader-enabled page-loading">
 <!--begin::Main-->
+
+<div class="ajax_load">
+    <div class="ajax_load_box">
+        <div class="ajax_load_box_circle"></div>
+        <div class="ajax_load_box_title">Aguarde, carregando!</div>
+    </div>
+</div>
 <div class="d-flex flex-column flex-root">
     <!--begin::Login-->
     <div class="login login-4 login-signin-on d-flex flex-row-fluid" id="kt_login">

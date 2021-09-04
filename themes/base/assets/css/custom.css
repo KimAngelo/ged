@@ -36,7 +36,7 @@
 
 .color-theme-secondary,
 .color-theme-secondary:hover {
-    color: var(--theme-color-secondary)!important;
+    color: var(--theme-color-secondary) !important;
 }
 
 /*DEFAULT LOAD*/
@@ -121,4 +121,30 @@
 
 .table th:scope[row] {
     font-weight: 700;
+}
+
+.paginator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
+
+.paginator a, .paginator_active {
+    color: var(--theme-btn-color-text);
+    background-color: var(--theme-btn-color);
+    border: 1px solid var(--theme-btn-color);
+    float: left;
+    padding: 8px 16px;
+    text-decoration: none;
+    margin: 2px;
+    border-radius: 5px;
+}
+
+.paginator_active,
+.paginator a:hover
+{
+    color: var(--theme-btn-color);
+    background-color: var(--theme-btn-color-text);
+    border: 1px solid var(--theme-btn-color);
 }

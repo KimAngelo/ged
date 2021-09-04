@@ -10,54 +10,59 @@
                 <div class="ajax_response"></div>
                 <?= flash() ?>
 
-                <form action="">
+                <form action="" class="form" method="post">
+                    <input type="hidden" name="action" value="update">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nome *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="first_name" value="<?= $user->first_name ?>" type="text"
+                                       class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Sobrenome *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="last_name" value="<?= $user->last_name ?>" type="text"
+                                       class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>E-mail *</label>
-                                <input type="email" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="email" value="<?= $user->email ?>" type="email" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Celular</label>
                                 <input type="text" class="form-control" placeholder="(00) 00000-0000"
-                                       data-mask="(00) 00000-0000"/>
+                                       name="phone" value="<?= $user->phone ?>" data-mask="(00) 00000-0000"/>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Função *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="occupation" value="<?= $user->occupation ?>" type="text"
+                                       class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Status *</label>
-                                <select required class="form-control">
-                                    <option>Ativo</option>
-                                    <option>Inativo</option>
+                                <select name="status" required class="form-control">
+                                    <option <?= $user->status == 1 ? "selected" : "" ?> value="1">Ativo</option>
+                                    <option <?= $user->status == 0 ? "selected" : "" ?> value="0">Inativo</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Administrador *</label>
-                                <select required class="form-control">
-                                    <option>Não</option>
-                                    <option>Sim</option>
+                                <select required class="form-control" name="admin">
+                                    <option <?= $user->admin == "false" ? "selected" : "" ?> value="false">Não</option>
+                                    <option <?= $user->admin == "true" ? "selected" : "" ?> value="true">Sim</option>
                                 </select>
                             </div>
                         </div>
@@ -66,29 +71,35 @@
                                 <label>Módulos de acesso *</label>
                                 <div class="checkbox-inline">
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input <?= in_array('1', $roles) ? "checked" : "" ?> type="checkbox" value="1"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Despesa
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input <?= in_array('2', $roles) ? "checked" : "" ?> type="checkbox" value="2" name="roles[]"/>
                                         <span></span>
                                         Licitação
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input <?= in_array('3', $roles) ? "checked" : "" ?> type="checkbox" value="3" name="roles[]"/>
                                         <span></span>
                                         Contrato
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input <?= in_array('4', $roles) ? "checked" : "" ?> type="checkbox" value="4" name="roles[]"/>
                                         <span></span>
                                         Legislação
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input <?= in_array('5', $roles) ? "checked" : "" ?> type="checkbox" value="5" name="roles[]"/>
                                         <span></span>
                                         Relatórios
+                                    </label>
+                                    <label class="checkbox">
+                                        <input <?= in_array('6', $roles) ? "checked" : "" ?> type="checkbox" value="6" name="roles[]"/>
+                                        <span></span>
+                                        Convênio
                                     </label>
                                 </div>
 
@@ -98,21 +109,13 @@
                             <div class="form-group">
                                 <label>Empresas vinculadas *</label>
                                 <div class="checkbox-list">
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 1
-                                    </label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 2
-                                    </label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 3
-                                    </label>
+                                    <?php foreach ($companies as $company): ?>
+                                        <label class="checkbox">
+                                            <input <?= in_array($company->id, $companies_user) ? "checked" : "" ?> type="checkbox" value="<?= $company->id ?>" name="companies[]"/>
+                                            <span></span>
+                                            <?= $company->name ?>
+                                        </label>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>
@@ -136,18 +139,19 @@
                     <h2 class="">Alterar senha</h2>
                 </div>
 
-                <form action="">
+                <form action="" class="form" method="post">
+                    <input type="hidden" name="action" value="update_password">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nova senha *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="password" type="password" class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Confirme a senha *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="password_re" type="password" class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-12">

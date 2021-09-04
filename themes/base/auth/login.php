@@ -8,6 +8,7 @@
     <?= flash() ?>
     <div class="ajax_response"></div>
     <form class="form" method="post">
+        <?= csrf_input() ?>
         <div class="form-group mb-5">
             <input class="form-control h-auto form-control-solid py-4 px-8" type="text"
                    placeholder="E-mail" name="email"/>
@@ -20,8 +21,7 @@
             <a href="<?= $router->route('auth.forget') ?>" class="text-muted color-theme-hover">Esqueceu
                 sua senha?</a>
         </div>
-        <button id="kt_login_signin_submit"
-                class="btn btn-theme font-weight-bold px-9 py-4 my-3 mx-4">Acessar
+        <button class="btn btn-theme font-weight-bold px-9 py-4 my-3 mx-4">Acessar
         </button>
     </form>
 </div>

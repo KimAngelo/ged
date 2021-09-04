@@ -5,6 +5,9 @@ namespace Source\Controller;
 
 
 use Source\Core\Controller;
+use Source\Core\Session;
+use Source\Models\User;
+use Source\Models\UserCompany;
 
 /**
  * Class Auth
@@ -27,6 +30,45 @@ class Auth extends Controller
      */
     public function login(?array $data): void
     {
+        if (\user()) {
+            $this->router->redirect('app.search');
+        }
+
+        if (isset($data['csrf']) && !empty($data['csrf'])) {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            /*if (!csrf_verify($data)) {
+                $json['message'] = $this->message->error('Ooops! Ocorreu um erro, entre em contato com o suporte')->render();
+                echo json_encode($json);
+                return;
+            }*/
+            if (in_array("", $data)) {
+                $json['message'] = $this->message->warning('Informe seu e-mail e senha para continuar')->render();
+                echo json_encode($json);
+                return;
+            }
+            if (!filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
+                $json['message'] = $this->message->warning('Informe seu e-mail correto para continuar')->render();
+                echo json_encode($json);
+                return;
+            }
+            if (!is_passwd(trim($data['password']))) {
+                $json['message'] = $this->message->warning('Senha incorreta, tente outra vez')->render();
+                echo json_encode($json);
+                return;
+            }
+            $user = (new User())->find('email = :e AND status = :s', "e={$data['email']}&s=1")->fetch();
+            if (!$user || !passwd_verify($data['password'], $user->password)) {
+                $json['message'] = $this->message->warning('E-mail e/ou senha incorreto, tente novamente')->render();
+                echo json_encode($json);
+                return;
+            }
+
+            (new Session())->set('authUser', $user->id);
+            $json['redirect'] = $this->router->route('auth.company');
+            echo json_encode($json);
+            return;
+        }
+
         $head = $this->seo->render(
             "Acessar " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -83,7 +125,8 @@ class Auth extends Controller
      */
     public function logout(): void
     {
-
+        (new Session())->destroy();
+        $this->router->redirect('auth.login');
     }
 
     /**
@@ -92,6 +135,27 @@ class Auth extends Controller
      */
     public function company(?array $data): void
     {
+        $session = new Session();
+        if (!\user()) {
+            $this->message->info("Faça login para poder acessar o painel")->flash();
+            $this->router->redirect('auth.login');
+        }
+
+        $user_company = new UserCompany();
+
+        //Altera a empresa por ajax
+        if (isset($data['company']) && filter_var($data['company'], FILTER_VALIDATE_INT)) {
+            if (!$user_company->find("id_user = :id_user AND id_company = :id_company", "id_user={$session->authUser}&id_company={$data['company']}")->count()) {
+                $json['message'] = $this->message->error("Você não tem acesso a essa empresa")->render();
+                echo json_encode($json);
+                return;
+            }
+            $session->set('company', $data['company']);
+            $json['redirect'] = $this->router->route('app.search');
+            echo json_encode($json);
+            return;
+        }
+
         $head = $this->seo->render(
             "Selecionar empresa | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -102,6 +166,7 @@ class Auth extends Controller
 
         echo $this->view->render("auth/company", [
             "head" => $head,
+            "companies" => $user_company->find('id_user = :id', "id=" . \user()->id)->fetch(true)
         ]);
     }
 }

@@ -57,8 +57,6 @@ $router->post("/empresa", "Auth:company", "auth.company");
  */
 $router->namespace("Source\Controller");
 $router->group("/admin");
-$router->get("/indexar", "Admin:indexar", "admin.indexar");
-$router->post("/indexar", "Admin:indexar", "admin.indexar");
 $router->get("/empresas", "Admin:companies", "admin.companies");
 $router->get("/empresa/editar/{id}", "Admin:updateCompany", "admin.updateCompany");
 $router->post("/empresa/editar/{id}", "Admin:updateCompany", "admin.updateCompany");
@@ -71,6 +69,10 @@ $router->post("/usuario/criar", "Admin:createUser", "admin.createUser");
 $router->get("/usuario/editar/{id}", "Admin:updateUser", "admin.updateUser");
 $router->post("/usuario/editar/{id}", "Admin:updateUser", "admin.updateUser");
 $router->post("/usuario/excluir", "Admin:deleteUser", "admin.deleteUser");
+
+//INDEXAR
+$router->get("/indexar", "Admin:indexar", "admin.indexar");
+$router->post("/indexar", "Admin:indexar", "admin.indexar");
 
 /**
  * ERROR ROUTES

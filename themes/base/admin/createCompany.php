@@ -10,44 +10,45 @@
                 <div class="ajax_response"></div>
                 <?= flash() ?>
 
-                <form action="">
+                <form class="form" action="" method="post">
+                    <input type="hidden" name="action" value="create">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Nome do orgão</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <label>Nome do orgão *</label>
+                                <input name="name" type="text" class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>CNPJ</label>
                                 <input type="text" class="form-control" placeholder="00.000.000/0000-00"
-                                       data-mask="00.000.000/0000-00" data-mask-reverse="true"/>
+                                       name="document" data-mask="00.000.000/0000-00" data-mask-reverse="true"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Gestor</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="manager" type="text" class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label>Tipo</label>
-                                <select required class="form-control">
+                                <label>Tipo *</label>
+                                <select name="type" required class="form-control">
                                     <option value=""></option>
-                                    <option>Prefeitura</option>
-                                    <option>Câmara Municipal</option>
-                                    <option>Autarquia</option>
-                                    <option>Previdência</option>
-                                    <option>Conselho</option>
+                                    <option value="Prefeitura">Prefeitura</option>
+                                    <option value="Câmara Municipal">Câmara Municipal</option>
+                                    <option value="Autarquia">Autarquia</option>
+                                    <option value="Previdência">Previdência</option>
+                                    <option value="Conselho">Conselho</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Endereço</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="address" type="text" class="form-control" placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-12">

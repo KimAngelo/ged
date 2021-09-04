@@ -13,8 +13,8 @@
         <div class="d-flex align-items-center mt-5">
 
             <div class="d-flex flex-column">
-                <a href="#" class="font-weight-bold font-size-h5 text-dark-75">Kim Angelo</a>
-                <div class="text-muted mt-1">Prefeito</div>
+                <a href="#" class="font-weight-bold font-size-h5 text-dark-75"><?= user()->first_name . " " . user()->last_name ?></a>
+                <div class="text-muted mt-1"><?= user()->occupation ?></div>
                 <div class="navi mt-2">
                     <a href="#" class="navi-item">
                         <span class="navi-link p-0 pb-2">
@@ -34,7 +34,7 @@
                                     <!--end::Svg Icon-->
                                 </span>
                             </span>
-                            <span class="navi-text text-muted text-hover-primary">kim@kimangelo.me</span>
+                            <span class="navi-text text-muted text-hover-primary"><?= user()->email ?></span>
                         </span>
                     </a>
                     <a href="<?= $router->route('auth.logout') ?>"
@@ -71,7 +71,7 @@
                     </div>
                     <div class="navi-text">
                         <div class="font-weight-bold">Alterar</div>
-                        <div class="text-muted">Prefeitura XXX XXXX XXXX
+                        <div class="text-muted"><?= company()->name ?>
                         </div>
                     </div>
                 </div>

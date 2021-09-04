@@ -7,7 +7,7 @@
             <div class="d-none d-lg-flex align-items-center mr-3">
                 <!--begin::Logo-->
                 <a href="<?= url() ?>" class="mr-20">
-                    <img alt="Logo"
+                    <img alt="<?= CONF_SITE_NAME ?>"
                          src="https://gedtec.rlvtecnologia.com.br/wp-content/themes/gedtec/img/logo.png"
                          class="max-h-35px"/>
                 </a>
@@ -38,8 +38,9 @@
                     </li>
                     <!--end::Item-->
                     <!--begin::Item-->
-                    <li class="nav-item mr-3">
-                        <a href="#" class="nav-link py-4 px-6
+                    <?php if (user()->admin === "true"): ?>
+                        <li class="nav-item mr-3">
+                            <a href="#" class="nav-link py-4 px-6
                         <?= menu_active($router->route('admin.indexar')) ?>
                         <?= menu_active($router->route('admin.companies')) ?>
                         <?= menu_active($router->route('admin.updateCompany', ['id' => $_ENV['id_company'] ?? ""])) ?>
@@ -49,9 +50,10 @@
                         <?= menu_active($router->route('admin.createUser')) ?>
                         <?= menu_active($router->route('admin.updateUser', ['id' => $_ENV['id_user'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.deleteUser')) ?>"
-                           data-toggle="tab"
-                           data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
-                    </li>
+                               data-toggle="tab"
+                               data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
+                        </li>
+                    <?php endif; ?>
                     <!--end::Item-->
                 </ul>
                 <!--begin::Tab Navs-->
@@ -64,11 +66,11 @@
                     <div class="btn btn-icon btn-hover-transparent-white w-sm-auto d-flex align-items-center btn-lg px-2"
                          id="kt_quick_user_toggle">
                         <div class="d-flex flex-column text-right pr-sm-3">
-                            <span class="text-white font-weight-bolder font-size-sm d-none d-sm-inline">Kim</span>
-                            <span class="text-white opacity-50 font-weight-bold font-size-sm d-none d-sm-inline">Prefeito</span>
+                            <span class="text-white font-weight-bolder font-size-sm d-none d-sm-inline"><?= user()->first_name ?></span>
+                            <span class="text-white opacity-50 font-weight-bold font-size-sm d-none d-sm-inline"><?= user()->occupation ?></span>
                         </div>
                         <span class="symbol symbol-35">
-                            <span class="symbol-label font-size-h5 font-weight-bold text-white bg-white-o-30">K</span>
+                            <span class="symbol-label font-size-h5 font-weight-bold text-white bg-white-o-30"><?= ucfirst(substr(user()->first_name, 0, 1)) ?></span>
                         </span>
                     </div>
                 </div>
@@ -109,8 +111,9 @@
                     </li>
                     <!--end::Item-->
                     <!--begin::Item-->
-                    <li class="nav-item mr-2">
-                        <a href="#" class="nav-link btn btn-clean
+                    <?php if (user()->admin === "true"): ?>
+                        <li class="nav-item mr-2">
+                            <a href="#" class="nav-link btn btn-clean
                         <?= menu_active($router->route('admin.indexar')) ?>
                         <?= menu_active($router->route('admin.companies')) ?>
                         <?= menu_active($router->route('admin.updateCompany', ['id' => $_ENV['id_company'] ?? ""])) ?>
@@ -120,9 +123,10 @@
                         <?= menu_active($router->route('admin.createUser')) ?>
                         <?= menu_active($router->route('admin.updateUser', ['id' => $_ENV['id_user'] ?? ""])) ?>
                         <?= menu_active($router->route('admin.deleteUser')) ?>"
-                           data-toggle="tab"
-                           data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
-                    </li>
+                               data-toggle="tab"
+                               data-target="#kt_header_tab_admin" role="tab">Administrativo</a>
+                        </li>
+                    <?php endif; ?>
                     <!--end::Item-->
                 </ul>
                 <!--begin::Tab Navs-->
@@ -163,7 +167,7 @@
                                 <li class="menu-item <?= menu_active($router->route('app.legislation')) ?>"
                                     aria-haspopup="true">
                                     <a href="<?= $router->route('app.legislation') ?>" class="menu-link">
-                                        <span class="menu-text">legislação</span>
+                                        <span class="menu-text">Legislação</span>
                                     </a>
                                 </li>
                                 <li class="menu-item <?= menu_active($router->route('app.report')) ?>"

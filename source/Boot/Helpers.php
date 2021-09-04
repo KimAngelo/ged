@@ -2,6 +2,7 @@
 
 use Source\Core\Session;
 use Source\Models\User;
+use Source\Support\GoogleStorage;
 
 /**
  * ####################
@@ -167,6 +168,19 @@ function phone_validation($telefone)
 
     $regexTelCel = '/[1-9]{2}[0-9]{4,5}[0-9]{4}/'; // Regex para validar celular e telefone
     if (preg_match($regexTelCel, $telefone)) {
+        return true;
+    }
+    return false;
+}
+
+/**
+ * @param string $value
+ * @return bool
+ * Verifica se é um decimal válido
+ */
+function is_decimal(string $value)
+{
+    if (preg_match("/^[0-9]+\.[0-9]{2}$/", $value)) {
         return true;
     }
     return false;
@@ -521,6 +535,14 @@ function user(): ?\Source\Models\User
 }
 
 /**
+ * @return \Source\Models\Company|null
+ */
+function company(): ?\Source\Models\Company
+{
+    return \Source\Models\Company::company();
+}
+
+/**
  * @param string|null $path
  * @param string $theme
  * @return string
@@ -555,6 +577,18 @@ function image(string $image, int $width, int $height = null, ?string $path = nu
         return url() . "/" . (new \Source\Support\Thumb())->make($image, $width, $height);
     }
     return url() . "/" . (new \Source\Support\Thumb())->make($image, $width, $height);
+}
+
+
+/**
+ * @param string $name
+ * @param null $path
+ * @return string
+ */
+function storage(string $name, $path = null): string
+{
+    $path = "/" . $path . $name;
+    return (new GoogleStorage())->url($path);
 }
 
 /**
@@ -671,3 +705,62 @@ function request_reapeat(string $field, string $value): bool
     return false;
 }
 
+
+/**
+ * @param $needle
+ * @param $haystack
+ * @return bool
+ */
+function in_array_r($needle, $haystack)
+{
+    foreach ($needle as $item) {
+        if (!in_array($item, $haystack)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+/**
+ * @param string $type
+ * @return string
+ */
+function type_expense(string $type)
+{
+    switch ($type) {
+        case "1.0":
+            return "Orçamentária";
+            break;
+        case "2.0":
+            return "Extra-orçamentaria";
+            break;
+        default:
+            return "";
+    }
+}
+
+/**
+ * @param string $type
+ * @return string
+ */
+function type_legislation(string $type)
+{
+    switch ($type) {
+        case "1":
+            return "Portaria";
+            break;
+        default:
+            return $type;
+    }
+}
+
+function type_report(string $type)
+{
+    switch ($type) {
+        case "1":
+            return "Contábil";
+            break;
+        default:
+            return $type;
+    }
+}

@@ -9,18 +9,21 @@
                 <h2 class="mb-10">Alterar minha senha</h2>
                 <div class="ajax_response"></div>
                 <?= flash() ?>
-                <form action="">
+                <form action="" class="form" method="post">
+                    <input type="hidden" name="action" value="update_password">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nova senha</label>
-                                <input type="password" class="form-control" placeholder="Digite aqui"/>
+                                <input name="password" required minlength="<?= CONF_PASSWD_MIN_LEN ?>" type="password"
+                                       class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Digite novamente</label>
-                                <input type="password" class="form-control" placeholder="Digite aqui"/>
+                                <input name="password_re" required minlength="<?= CONF_PASSWD_MIN_LEN ?>"
+                                       type="password" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-12">

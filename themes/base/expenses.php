@@ -4,16 +4,25 @@
     <div class="col-12">
         <div class="card card-custom gutter-b">
             <div class="card-body">
-                <h2 class="mb-10">Despesas</h2>
+                <div class="d-flex justify-content-between align-items-center mb-10">
+                    <h2>Despesas</h2>
+                    <button title="Limpar campos" onclick="clearForm('form')"
+                            class="btn btn-light font-weight-bold btn-pill btn-lg">Limpar campos
+                    </button>
+                </div>
+
                 <div class="ajax_response"></div>
                 <?= flash() ?>
 
-                <form action="">
+                <form action="" method="get">
+                    <input type="hidden" name="filter" value="s">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>N° da despesa</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['number_expense']) && !empty($_GET['number_expense']) ? $_GET['number_expense'] : "" ?>"
+                                       name="number_expense" type="text" class="form-control"
+                                       placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -21,11 +30,13 @@
                                 <label class="">Data</label>
                                 <div class="input-daterange input-group" id="kt_datepicker_5">
                                     <input type="text" class="form-control" placeholder="Inicio" name="date_start"
+                                           value="<?= isset($_GET['date_start']) && !empty($_GET['date_start']) ? $_GET['date_start'] : "" ?>"
                                            data-mask="00/00/0000"/>
                                     <div class="input-group-append">
                                         <span class="input-group-text">até</span>
                                     </div>
                                     <input type="text" class="form-control" placeholder="Final" name="date_end"
+                                           value="<?= isset($_GET['date_end']) && !empty($_GET['date_end']) ? $_GET['date_end'] : "" ?>"
                                            data-mask="00/00/0000"/>
                                 </div>
                             </div>
@@ -33,25 +44,29 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Credor</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['favored']) && !empty($_GET['favored']) ? $_GET['favored'] : "" ?>"
+                                       name="favored" type="text" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Fonte</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['source']) && !empty($_GET['source']) ? $_GET['source'] : "" ?>"
+                                       name="source" type="text" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label class="">Valor</label>
                                 <div class="input-group">
-                                    <input placeholder="R$" type="text" class="form-control" name="start"
+                                    <input placeholder="R$" type="text" class="form-control" name="value_start"
+                                           value="<?= isset($_GET['value_start']) && !empty($_GET['value_start']) ? $_GET['value_start'] : "" ?>"
                                            data-mask="#.##0,00" data-mask-reverse="true"/>
                                     <div class="input-group-append">
                                         <span class="input-group-text">até</span>
                                     </div>
-                                    <input placeholder="R$" type="text" class="form-control" name="end"
+                                    <input placeholder="R$" type="text" class="form-control" name="value_end"
+                                           value="<?= isset($_GET['value_end']) && !empty($_GET['value_end']) ? $_GET['value_end'] : "" ?>"
                                            data-mask="#.##0,00" data-mask-reverse="true"/>
                                 </div>
                             </div>
@@ -59,7 +74,8 @@
                         <div class="col-md-9">
                             <div class="form-group">
                                 <label>Histórico</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['historical']) && !empty($_GET['historical']) ? $_GET['historical'] : "" ?>"
+                                       name="historical" type="text" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
 
@@ -73,144 +89,121 @@
 
 
                 <div class="mt-15">
-                    <table class="table table-hover table-responsive-sm">
-                        <thead>
-                        <tr>
-                            <th>Número</th>
-                            <th>Credor</th>
-                            <th>Valor</th>
-                            <th>Data</th>
-                            <th>Ação</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>03900/200</th>
-                            <th>FOLHA DE PAGAMENTO DOS SERVIDORES MUNICIPAIS</th>
-                            <th>R$ 1.595,35</th>
-                            <th>30/05/2018</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
+                    <?php if (!empty($expenses)): ?>
+                        <table class="table table-hover table-responsive-sm">
+                            <thead>
+                            <tr>
+                                <th>Número</th>
+                                <th>Credor</th>
+                                <th>Valor</th>
+                                <th>Data</th>
+                                <th>Ação</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                            <?php foreach ($expenses as $expense): ?>
+                                <tr>
+                                    <th><?= $expense->number_expense ?></th>
+                                    <th><?= $expense->favored ?></th>
+                                    <th>R$ <?= str_price($expense->value) ?></th>
+                                    <th><?= date_fmt($expense->date, 'd/m/Y') ?></th>
+                                    <th>
+                                        <div class="btn-group" role="group"
+                                             aria-label="Button group with nested dropdown">
+                                            <a target="_blank"
+                                               href="<?= storage($expense->document_name, company()->id . "/" . CONF_UPLOAD_EXPENSE) ?>"
+                                               class="btn btn-primary font-weight-bold btn-sm"><i
+                                                        class="fas fa-download"></i></a>
 
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop1" type="button"
+                                                        class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                    <a target="_blank" class="dropdown-item"
+                                                       href="<?= storage($expense->document_name, company()->id . "/" . CONF_UPLOAD_EXPENSE) ?>">Visualizar
+                                                        PDF</a>
+                                                    <a data-toggle="modal"
+                                                       data-target="#information_<?= $expense->id ?>"
+                                                       class="dropdown-item"
+                                                       href="#">Informações</a>
+                                                    <a data-toggle="modal" data-target="#send_email_<?= $expense->id ?>"
+                                                       class="dropdown-item"
+                                                       href="#">Enviar por e-mail</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>03900/200</th>
-                            <th>FOLHA DE PAGAMENTO DOS SERVIDORES MUNICIPAIS</th>
-                            <th>R$ 1.595,35</th>
-                            <th>30/05/2018</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
-
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>03900/200</th>
-                            <th>FOLHA DE PAGAMENTO DOS SERVIDORES MUNICIPAIS</th>
-                            <th>R$ 1.595,35</th>
-                            <th>30/05/2018</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
-
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
+                                    </th>
+                                </tr>
+                            <?php endforeach; ?>
+                        </table>
                         </tbody>
-                    </table>
+                        </table>
+                        <?= $render; ?>
+                    <?php else: ?>
+                        <p>Não encontramos despesas cadastradas</p>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="information_" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Informações</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i aria-hidden="true" class="ki ki-close"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-        </div>
-    </div>
-</div>
+<?php if (!empty($expenses)):foreach ($expenses as $expense): ?>
 
-<div class="modal fade" id="send_email_" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Enviar por e-mail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i aria-hidden="true" class="ki ki-close"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="">Informe o e-mail que deseja encaminhar o arquivo:</label>
-                    <input type="email" class="form-control"  placeholder="Digite aqui o e-mail"/>
+    <div class="modal fade" id="information_<?= $expense->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">INFORMAÇÕES</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="ki ki-close"></i>
+                    </button>
                 </div>
-                <button class="btn btn-theme">Enviar</button>
+                <div class="modal-body">
+                    <p><span class="font-weight-bolder">Credor: </span><?= $expense->favored ?></p>
+                    <p><span class="font-weight-bolder">Fonte: </span><?= $expense->source ?></p>
+                    <p><span class="font-weight-bolder">Tipo: </span><?= type_expense($expense->type) ?></p>
+                    <p><span class="font-weight-bolder">Valor: </span>R$<?= str_price($expense->value) ?></p>
+                    <p><span class="font-weight-bolder">Histórico: </span><?= $expense->historical ?></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <div class="modal fade" id="send_email_<?= $expense->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enviar por e-mail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="ki ki-close"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="form">
+                        <input type="hidden" name="action" value="send_document_email">
+                        <input type="hidden" name="document" value="<?= $expense->id ?>">
+                        <div class="form-group">
+                            <label>Informe o e-mail que deseja encaminhar o arquivo:</label>
+                            <input name="email" required type="email" class="form-control"
+                                   placeholder="Digite aqui o e-mail"/>
+                        </div>
+                        <button type="submit" class="btn btn-theme">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
 

@@ -4,16 +4,24 @@
     <div class="col-12">
         <div class="card card-custom gutter-b">
             <div class="card-body">
-                <h2 class="mb-10">Legislação</h2>
+                <div class="d-flex justify-content-between align-items-center mb-10">
+                    <h2>Legislação</h2>
+                    <button title="Limpar campos" onclick="clearForm('form')"
+                            class="btn btn-light font-weight-bold btn-pill btn-lg">Limpar campos
+                    </button>
+                </div>
+
                 <div class="ajax_response"></div>
                 <?= flash() ?>
 
-                <form action="">
+                <form action="" method="get">
+                    <input type="hidden" name="filter" value="s">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Número</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['number']) && !empty($_GET['number']) ? $_GET['number'] : "" ?>"
+                                       name="number" type="text" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -21,11 +29,13 @@
                                 <label class="">Data</label>
                                 <div class="input-daterange input-group" id="kt_datepicker_5">
                                     <input type="text" class="form-control" placeholder="Inicio" name="date_start"
+                                           value="<?= isset($_GET['date_start']) && !empty($_GET['date_start']) ? $_GET['date_start'] : "" ?>"
                                            data-mask="00/00/0000"/>
                                     <div class="input-group-append">
                                         <span class="input-group-text">até</span>
                                     </div>
                                     <input type="text" class="form-control" placeholder="Final" name="date_end"
+                                           value="<?= isset($_GET['date_end']) && !empty($_GET['date_end']) ? $_GET['date_end'] : "" ?>"
                                            data-mask="00/00/0000"/>
                                 </div>
                             </div>
@@ -33,8 +43,11 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Tipo</label>
-                                <select class="form-control">
+                                <select name="type" class="form-control">
                                     <option value=""></option>
+                                    <option <?= isset($_GET['type']) && !empty($_GET['type']) ? "selected" : "" ?>
+                                            value="1">Portaria
+                                    </option>
                                 </select>
                             </div>
                         </div>
@@ -42,7 +55,8 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Ementa</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= isset($_GET['ementa']) && !empty($_GET['ementa']) ? $_GET['ementa'] : "" ?>"
+                                       name="ementa" type="text" class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
 
@@ -56,166 +70,112 @@
 
 
                 <div class="mt-15">
-                    <table class="table table-hover table-responsive-sm">
-                        <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Número</th>
-                            <th>Ementa</th>
-                            <th>Ação</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Portaria</th>
-                            <th>008/1994</th>
-                            <th>NOMEIA COMISSÃO PERMANENTE DE LICITAÇÃO</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
+                    <?php if (!empty($legislations)): ?>
+                        <table class="table table-hover table-responsive-sm">
+                            <thead>
+                            <tr>
+                                <th>Tipo</th>
+                                <th>Número</th>
+                                <th>Ementa</th>
+                                <th>Ação</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($legislations as $legislation): ?>
+                                <tr>
+                                    <th><?= type_legislation($legislation->type) ?></th>
+                                    <th><?= $legislation->number ?></th>
+                                    <th><?= str_limit_words($legislation->ementa, 10) ?></th>
+                                    <th>
+                                        <div class="btn-group" role="group"
+                                             aria-label="Button group with nested dropdown">
+                                            <a href="<?= storage($legislation->document_name, company()->id . "/" . CONF_UPLOAD_LEGISLATION) ?>"
+                                               target="_blank" class="btn btn-primary font-weight-bold btn-sm"><i
+                                                        class="fas fa-download"></i></a>
 
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
+                                            <div class="btn-group" role="group">
+                                                <button id="btnGroupDrop1" type="button"
+                                                        class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
+                                                        data-toggle="dropdown" aria-haspopup="true"
+                                                        aria-expanded="false">
+                                                    <i class="fas fa-plus"></i>
+                                                </button>
+                                                <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                                                    <a class="dropdown-item"
+                                                       href="<?= storage($legislation->document_name, company()->id . "/" . CONF_UPLOAD_LEGISLATION) ?>">Visualizar
+                                                        PDF</a>
+                                                    <a data-toggle="modal"
+                                                       data-target="#information_<?= $legislation->id ?>"
+                                                       class="dropdown-item"
+                                                       href="#">Informações</a>
+                                                    <a data-toggle="modal"
+                                                       data-target="#send_email_<?= $legislation->id ?>"
+                                                       class="dropdown-item"
+                                                       href="#">Enviar por e-mail</a>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>Portaria</th>
-                            <th>008/1994</th>
-                            <th>NOMEIA COMISSÃO PERMANENTE DE LICITAÇÃO</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
-
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>Portaria</th>
-                            <th>008/1994</th>
-                            <th>NOMEIA COMISSÃO PERMANENTE DE LICITAÇÃO</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
-
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th>Portaria</th>
-                            <th>008/1994</th>
-                            <th>NOMEIA COMISSÃO PERMANENTE DE LICITAÇÃO</th>
-                            <th>
-                                <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
-                                    <button type="button" class="btn btn-primary font-weight-bold btn-sm"><i
-                                                class="fas fa-download"></i></button>
-
-                                    <div class="btn-group" role="group">
-                                        <button id="btnGroupDrop1" type="button"
-                                                class="btn btn-dark font-weight-bold dropdown-toggle btn-sm"
-                                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                            <i class="fas fa-plus"></i>
-                                        </button>
-                                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                            <a class="dropdown-item" href="#">Visualizar PDF</a>
-                                            <a data-toggle="modal" data-target="#information_" class="dropdown-item"
-                                               href="#">Informações</a>
-                                            <a data-toggle="modal" data-target="#send_email_" class="dropdown-item"
-                                               href="#">Enviar por e-mail</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </th>
-                        </tr>
-                        </tbody>
-                    </table>
+                                    </th>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<div class="modal fade" id="information_" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Informações</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i aria-hidden="true" class="ki ki-close"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                ...
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="send_email_" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-     aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Enviar por e-mail</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <i aria-hidden="true" class="ki ki-close"></i>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="">Informe o e-mail que deseja encaminhar o arquivo:</label>
-                    <input type="email" class="form-control" placeholder="Digite aqui o e-mail"/>
+<?php if (!empty($legislations)): foreach ($legislations as $legislation): ?>
+    <div class="modal fade" id="information_<?= $legislation->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Informações</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="ki ki-close"></i>
+                    </button>
                 </div>
-                <button class="btn btn-theme">Enviar</button>
+                <div class="modal-body">
+                    <p><span class="font-weight-bolder">Número: </span><?= $legislation->number ?></p>
+                    <p><span class="font-weight-bolder">Tipo: </span><?= type_legislation($legislation->type) ?></p>
+                    <p><span class="font-weight-bolder">Data: </span><?= date_fmt($legislation->date, 'd/m/Y') ?></p>
+                    <p><span class="font-weight-bolder">Ementa: </span>R$<?= $legislation->ementa ?></p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
+    <div class="modal fade" id="send_email_<?= $legislation->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enviar por e-mail</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <i aria-hidden="true" class="ki ki-close"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form action="" method="post" class="form">
+                        <input type="hidden" name="action" value="send_document_email">
+                        <input type="hidden" name="document" value="<?= $legislation->id ?>">
+                        <div class="form-group">
+                            <label>Informe o e-mail que deseja encaminhar o arquivo:</label>
+                            <input name="email" required type="email" class="form-control"
+                                   placeholder="Digite aqui o e-mail"/>
+                        </div>
+                        <button type="submit" class="btn btn-theme">Enviar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+<?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
 

@@ -19,33 +19,33 @@
                     <tbody>
                     <tr>
                         <th class="font-weight-bolder">Despesa</th>
-                        <th>43.062</th>
-                        <th>247.082</th>
+                        <th><?= $reports->expense_total_documents ?></th>
+                        <th><?= $reports->expense_total_pages ?></th>
                     </tr>
                     <tr>
                         <th class="font-weight-bolder">Licitação</th>
-                        <th>181</th>
-                        <th>43.514</th>
+                        <th><?= $reports->bidding_total_documents ?></th>
+                        <th><?= $reports->bidding_total_pages ?></th>
                     </tr>
                     <tr>
                         <th class="font-weight-bolder">Contrato</th>
-                        <th>196</th>
-                        <th>1.718</th>
+                        <th><?= $reports->contract_total_documents ?></th>
+                        <th><?= $reports->contract_total_pages ?></th>
                     </tr>
                     <tr>
                         <th class="font-weight-bolder">Legislação</th>
-                        <th>2.036</th>
-                        <th>3.552</th>
+                        <th><?= $reports->legislation_total_documents ?></th>
+                        <th><?= $reports->legislation_total_pages ?></th>
                     </tr>
                     <tr>
                         <th class="font-weight-bolder">Relatório</th>
-                        <th>198</th>
-                        <th>40.306</th>
+                        <th><?= $reports->report_total_documents ?></th>
+                        <th><?= $reports->report_total_pages ?></th>
                     </tr>
                     <tr>
                         <th class="font-weight-bolder">Total</th>
-                        <th>45.673</th>
-                        <th>336.172</th>
+                        <th><?= $reports->total_documents ?></th>
+                        <th><?= $reports->total_pages ?></th>
                     </tr>
                     </tbody>
                 </table>

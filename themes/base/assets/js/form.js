@@ -30,12 +30,13 @@ $(function () {
             processData: false,
             beforeSend: function () {
                 /*$('.btn-theme').addClass('m-loader m-loader--light m-loader--left');*/
+                document.querySelector(".btn-theme").setAttribute("disabled", "disabled");
                 load('open');
             },
             success: function (response) {
 
-                //$('html').animate({scrollTop: 0}, 'slow');
                 if (response.message) {
+                    $('html').animate({scrollTop: 0}, 'slow');
                     $(".ajax_response").html(response.message);
                     return false;
                 }
@@ -70,6 +71,7 @@ $(function () {
             complete: function () {
                 /*$('.btn-theme').removeClass('m-loader m-loader--light m-loader--left');*/
                 load('close');
+                document.querySelector(".btn-theme").removeAttribute("disabled");
             }
         });
     });
@@ -131,3 +133,39 @@ var KTBootstrapDatepicker = function () {
         }
     };
 }();
+
+function clearForm(myFormElement) {
+
+    var elements = document.querySelector(myFormElement).elements;
+
+    for(i=0; i<elements.length; i++) {
+
+        field_type = elements[i].type.toLowerCase();
+
+        switch(field_type) {
+
+            case "text":
+            case "password":
+            case "textarea":
+            case "hidden":
+
+                elements[i].value = "";
+                break;
+
+            case "radio":
+            case "checkbox":
+                if (elements[i].checked) {
+                    elements[i].checked = false;
+                }
+                break;
+
+            case "select-one":
+            case "select-multi":
+                elements[i].selectedIndex = -1;
+                break;
+
+            default:
+                break;
+        }
+    }
+}

@@ -1,8 +1,6 @@
 <?php
 
 
-use Source\Core\Environment;
-
 require __DIR__ . "/../../vendor/autoload.php";
 
 //Inicia variáveis de ambiente
@@ -103,10 +101,14 @@ define("CONF_VIEW_PANEL", "panel");
 define("CONF_UPLOAD_DIR", "storage");
 define("CONF_UPLOAD_IMAGE_DIR", "images");
 define("CONF_UPLOAD_IMAGE_DIR_SITE", CONF_UPLOAD_IMAGE_DIR . "/site");
-define("CONF_UPLOAD_IMAGE_DIR_PROFILE", CONF_UPLOAD_IMAGE_DIR . "/profile");
-define("CONF_UPLOAD_IMAGE_DIR_ADVERT", CONF_UPLOAD_IMAGE_DIR . "/adverts");
-define("CONF_UPLOAD_IMAGE_DIR_BLOG", CONF_UPLOAD_IMAGE_DIR . "/blog");
-define("CONF_UPLOAD_IMAGE_DIR_RENT", CONF_UPLOAD_IMAGE_DIR . "/rent");
+define("CONF_UPLOAD_COMPANY", CONF_UPLOAD_DIR . "/company");
+define("CONF_UPLOAD_DOCUMENT", "documentos");
+define("CONF_UPLOAD_BIDDING", CONF_UPLOAD_DOCUMENT . "/licitação/");
+define("CONF_UPLOAD_CONTRACT", CONF_UPLOAD_DOCUMENT . "/contrato/");
+define("CONF_UPLOAD_CONVENTION", CONF_UPLOAD_DOCUMENT . "/convênio/");
+define("CONF_UPLOAD_EXPENSE", CONF_UPLOAD_DOCUMENT . "/despesa/");
+define("CONF_UPLOAD_LEGISLATION", CONF_UPLOAD_DOCUMENT . "/legislação/");
+define("CONF_UPLOAD_REPORT", CONF_UPLOAD_DOCUMENT . "/relatório/");
 
 /**
  * IMAGES

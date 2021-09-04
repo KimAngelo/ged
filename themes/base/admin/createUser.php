@@ -10,30 +10,34 @@
                 <div class="ajax_response"></div>
                 <?= flash() ?>
 
-                <form action="">
+                <form action="" class="form" method="post">
+                    <input type="hidden" name="action" value="create">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nome *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="first_name" required type="text" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Sobrenome *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="last_name" required type="text" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>E-mail *</label>
-                                <input type="email" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="email" required type="email" class="form-control"
+                                       placeholder="Digite aqui..." autocomplete="off"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Senha *</label>
-                                <input required minlength="<?= CONF_PASSWD_MIN_LEN ?>"
+                                <input name="password" required minlength="<?= CONF_PASSWD_MIN_LEN ?>"
                                        maxlength="<?= CONF_PASSWD_MAX_LEN ?>" type="password" class="form-control"
                                        placeholder="Digite aqui..."/>
                             </div>
@@ -41,31 +45,32 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Celular</label>
-                                <input type="text" class="form-control" placeholder="(00) 00000-0000"
+                                <input name="phone" type="text" class="form-control" placeholder="(00) 00000-0000"
                                        data-mask="(00) 00000-0000"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Função *</label>
-                                <input type="text" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="occupation" required type="text" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Status *</label>
-                                <select required class="form-control">
-                                    <option>Ativo</option>
-                                    <option>Inativo</option>
+                                <select required class="form-control" name="status">
+                                    <option value="1">Ativo</option>
+                                    <option value="0">Inativo</option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Administrador *</label>
-                                <select required class="form-control">
-                                    <option>Não</option>
-                                    <option>Sim</option>
+                                <select name="admin" required class="form-control">
+                                    <option value="false">Não</option>
+                                    <option value="true">Sim</option>
                                 </select>
                             </div>
                         </div>
@@ -74,29 +79,34 @@
                                 <label>Módulos de acesso *</label>
                                 <div class="checkbox-inline">
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input type="checkbox" value="1" name="roles[]"/>
                                         <span></span>
-                                        Despesa
+                                        Despesas
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input type="checkbox" value="2" name="roles[]"/>
                                         <span></span>
                                         Licitação
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input type="checkbox" value="3" name="roles[]"/>
                                         <span></span>
                                         Contrato
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input type="checkbox" value="4" name="roles[]"/>
                                         <span></span>
                                         Legislação
                                     </label>
                                     <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes2"/>
+                                        <input type="checkbox" value="5" name="roles[]"/>
                                         <span></span>
-                                        Relatórios
+                                        Relatório
+                                    </label>
+                                    <label class="checkbox">
+                                        <input type="checkbox" value="6" name="roles[]"/>
+                                        <span></span>
+                                        Convênio
                                     </label>
                                 </div>
 
@@ -106,21 +116,13 @@
                             <div class="form-group">
                                 <label>Empresas vinculadas *</label>
                                 <div class="checkbox-list">
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 1
-                                    </label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 2
-                                    </label>
-                                    <label class="checkbox">
-                                        <input type="checkbox" name="Checkboxes1"/>
-                                        <span></span>
-                                        Empresa 3
-                                    </label>
+                                    <?php foreach ($companies as $company): ?>
+                                        <label class="checkbox">
+                                            <input type="checkbox" value="<?= $company->id ?>" name="companies[]"/>
+                                            <span></span>
+                                            <?= $company->name ?>
+                                        </label>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                         </div>

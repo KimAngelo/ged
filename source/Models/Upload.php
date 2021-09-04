@@ -4,6 +4,7 @@
 namespace Source\Models;
 
 use Gumlet\ImageResize;
+use Source\Support\GoogleStorage;
 use Source\Support\Message;
 
 
@@ -71,6 +72,13 @@ class Upload
     }
 
 
+    /**
+     * @param $file
+     * @param $file_name
+     * @param string $path
+     * @param bool $optimize
+     * @return bool
+     */
     public function sends($file, $file_name, $path = __DIR__ . "/../../" . CONF_UPLOAD_DIR . "/" . CONF_UPLOAD_IMAGE_DIR . "/", bool $optimize = false): bool
     {
         $permission = array('image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png');
@@ -137,5 +145,39 @@ class Upload
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param $file
+     * @param $patch
+     * @param array $permissions
+     * @return bool
+     * Envia arquivo que vem do input html
+     */
+    public function sendStorage($file, $patch, $permissions = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png'])
+    {
+        if (!in_array($file['type'], $permissions) || $file['size'] > 10000000) {
+            return false;
+        }
+
+        return (new GoogleStorage())->write($patch, file_get_contents($file['tmp_name']));
+    }
+
+    public function sendFile($file, $path, $permission = ['image/jpeg', 'image/jpg', 'image/pjpeg', 'image/png'])
+    {
+        if (!in_array(mime_content_type($file), $permission)) {
+            return false;
+        }
+        return (new GoogleStorage())->write($path, file_get_contents($file));
+    }
+
+    /**
+     * @param $patch
+     * @return bool
+     * @throws \League\Flysystem\FileNotFoundException
+     */
+    public function removeStorage($patch): bool
+    {
+        return (new GoogleStorage())->delete($patch);
     }
 }

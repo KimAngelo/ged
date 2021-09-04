@@ -6,7 +6,7 @@
             <div class="card-body">
                 <h2 class="mb-10">Indexação</h2>
                 <div class="ajax_response"></div>
-                <?= flash() ?>
+                <?= flash(); ?>
                 <table class="table table-hover table-responsive-sm">
                     <thead class="thead-theme">
                     <tr>
@@ -15,84 +15,26 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>despesa_2013_090920_121051.xml</th>
-                        <th>
-                            <div class="btn-group" role="group" aria-label="Basic example">
-                                <form action="">
-                                    <button type="button" class="btn btn-theme mr-2">Indexar</button>
-                                </form>
-                                <form action="">
-                                    <button type="button" class="btn btn-danger">Apagar</button>
-                                </form>
-                            </div>
-                        </th>
-                    </tr>
+                    <?php if (!empty($list)): ?>
+                        <?php foreach ($list as $item): ?>
+                            <tr>
+                                <th><?= $item['name'] ?></th>
+                                <th>
+                                    <div class="btn-group" role="group" aria-label="Basic example">
+                                        <form action="" method="post" class="form">
+                                            <input type="hidden" name="action" value="indexar">
+                                            <input type="hidden" name="file_name" value="<?= $item['name'] ?>">
+                                            <input type="hidden" name="module" value="<?= $item['module'] ?>">
+                                            <button type="submit" class="btn btn-theme mr-2">Indexar</button>
+                                        </form>
+                                        <form action="">
+                                            <button type="button" class="btn btn-danger">Apagar</button>
+                                        </form>
+                                    </div>
+                                </th>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                     </tbody>
                 </table>
             </div>

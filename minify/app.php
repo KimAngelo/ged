@@ -8,6 +8,7 @@ $minCSS = new MatthiasMullie\Minify\CSS();
 $minCSS->add(__DIR__ . "/../themes/" . CONF_VIEW_APP . "/assets/plugins/global/plugins.bundle.css");
 $minCSS->add(__DIR__ . "/../themes/" . CONF_VIEW_APP . "/assets/plugins/custom/prismjs/prismjs.bundle.css");
 $minCSS->add(__DIR__ . "/../themes/" . CONF_VIEW_APP . "/assets/css/style.bundle.css");
+$minCSS->add(__DIR__ . "/../shared/assets/css/animate.css");
 
 //Minify CSS
 $minCSS->minify(__DIR__ . "/../themes/" . CONF_VIEW_APP . "/assets/style.css");

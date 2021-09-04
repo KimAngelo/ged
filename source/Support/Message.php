@@ -39,7 +39,7 @@ class Message
      */
     public function render(): string
     {
-        return "<div class='alert {$this->getType()}'><i class='{$this->getIcon()}'></i> <b>{$this->getText()}</b></div>";
+        return "<div class='alert {$this->getType()}'><i class='text-white {$this->getIcon()}'></i> <b>{$this->getText()}</b></div>";
     }
 
     /**
@@ -136,7 +136,7 @@ class Message
     public function error(string $message): Message
     {
         $this->type = "alert-danger animated bounce";
-        $this->icon = "fa fa-exclamation-triangle";
+        $this->icon = "fas fa-exclamation-circle";
         $this->text = $this->filter($message);
         return $this;
     }

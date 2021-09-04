@@ -31,7 +31,9 @@
     "vlucas/phpdotenv": "^5.3",
     "robmorgan/phinx": "^0.12.7",
     "ext-json": "*",
-    "ext-pdo": "*"
+    "ext-pdo": "*",
+    "ext-simplexml": "*",
+    "superbalist/flysystem-google-storage": "^7.2"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.9"
