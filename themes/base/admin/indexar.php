@@ -7,7 +7,7 @@
                 <h2 class="mb-10">Indexação</h2>
                 <div class="ajax_response"></div>
                 <?= flash(); ?>
-                <table class="table table-hover table-responsive-sm">
+                <table class="table table-hover table-responsive-md">
                     <thead class="thead-theme">
                     <tr>
                         <th>Arquivos não indexados</th>

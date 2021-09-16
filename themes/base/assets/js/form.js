@@ -147,7 +147,7 @@ function clearForm(myFormElement) {
             case "text":
             case "password":
             case "textarea":
-            case "hidden":
+            case "number":
 
                 elements[i].value = "";
                 break;

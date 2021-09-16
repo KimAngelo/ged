@@ -5,17 +5,6 @@ use Phinx\Migration\AbstractMigration;
 
 final class Companies extends AbstractMigration
 {
-    /**
-     * Change Method.
-     *
-     * Write your reversible migrations using this method.
-     *
-     * More information on writing migrations is available here:
-     * https://book.cakephp.org/phinx/0/en/migrations.html#the-change-method
-     *
-     * Remember to call "create()" or "update()" and NOT "save()" when working
-     * with the Table class.
-     */
     public function change(): void
     {
         //create the table companies
@@ -25,6 +14,18 @@ final class Companies extends AbstractMigration
             ->addColumn('manager', 'string', ['limit' => 20, 'null' => true])
             ->addColumn('type', 'string', ['limit' => 20])
             ->addColumn('address', 'string', ['limit' => 100, 'null' => true])
+            ->addColumn('expense_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('expense_total_pages', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('bidding_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('bidding_total_pages', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('contract_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('contract_total_pages', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('convention_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('convention_total_pages', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('legislation_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('legislation_total_pages', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('report_total_documents', 'integer', ['null' => true, 'after' => 'address'])
+            ->addColumn('report_total_pages', 'integer', ['null' => true, 'after' => 'address'])
             ->addTimestamps()
             ->create();
     }

@@ -15,6 +15,8 @@ final class Legislation extends AbstractMigration
             ->addColumn('date', 'date')
             ->addColumn('document_name', 'string')
             ->addColumn('total_page', 'integer')
+            ->addColumn('id_company', 'integer')
+            ->addForeignKey('id_company', 'companies', 'id', ['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addTimestamps()
             ->create();
     }

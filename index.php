@@ -43,8 +43,8 @@ $router->get("/entrar", "Auth:login", "auth.login");
 $router->post("/entrar", "Auth:login", "auth.login");
 $router->get("/esqueceu-senha", "Auth:forget", "auth.forget");
 $router->post("/esqueceu-senha", "Auth:forget", "auth.forget");
-$router->get("/recuperar", "Auth:recover", "auth.recover");
-$router->post("/recuperar", "Auth:recover", "auth.recover");
+$router->get("/recuperar/{code}", "Auth:recover", "auth.recover");
+$router->post("/recuperar", "Auth:recover", "auth.recover.post");
 $router->get("/sair", "Auth:logout", "auth.logout");
 
 //Selecionar empresa

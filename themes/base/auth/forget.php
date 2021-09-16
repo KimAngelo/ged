@@ -8,6 +8,7 @@
     <?= flash() ?>
     <div class="ajax_response"></div>
     <form class="form" method="post">
+        <?= csrf_input() ?>
         <div class="form-group mb-5">
             <input class="form-control h-auto form-control-solid py-4 px-8" type="text"
                    placeholder="E-mail" name="email"/>

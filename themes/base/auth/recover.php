@@ -7,14 +7,16 @@
     </div>
     <?= flash() ?>
     <div class="ajax_response"></div>
-    <form class="form" method="post">
+    <form class="form" method="post" action="<?= $router->route('auth.recover.post') ?>">
+        <input type="hidden" name="code" value="<?= $code; ?>"/>
+        <?= csrf_input() ?>
         <div class="form-group mb-5">
             <input class="form-control h-auto form-control-solid py-4 px-8" type="password"
                    placeholder="Nova senha" name="password"/>
         </div>
         <div class="form-group mb-5">
             <input class="form-control h-auto form-control-solid py-4 px-8" type="password"
-                   placeholder="Repita sua senha" name="password"/>
+                   placeholder="Repita sua senha" name="password_re"/>
         </div>
         <button id="kt_login_signin_submit"
                 class="btn btn-theme font-weight-bold px-9 py-4 my-3 mx-4">Restaurar acesso

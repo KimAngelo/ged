@@ -6,8 +6,10 @@ namespace Source\Controller;
 
 use Source\Core\Controller;
 use Source\Core\Session;
+use Source\Core\View;
 use Source\Models\User;
 use Source\Models\UserCompany;
+use Source\Support\Email;
 
 /**
  * Class Auth
@@ -88,6 +90,65 @@ class Auth extends Controller
      */
     public function forget(?array $data): void
     {
+        if (\user()) {
+            $this->router->redirect('app.search');
+        }
+
+        if (isset($data['csrf'])) {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
+            if (!csrf_verify($data)) {
+                $json['message'] = $this->message->error("Ooops! Tente novamente mais tarde!")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (request_reapeat("authforget", $data['email'])) {
+                $json['message'] = $this->message->error("Ooops! Você já tentou este e-mail antes")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty($data["email"])) {
+                $json['message'] = $this->message->warning("Informe seu e-mail para continuar")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            if (!is_email($data['email'])) {
+                $json['message'] = $this->message->warning("Forneça um e-mail válido")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $user = (new User())->find("email = :email AND status = :s", "email={$data['email']}&s=1")->fetch();
+            if (!$user) {
+                $json['message'] = $this->message->warning(" O e-mail informado não está registrado.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $user->forget = md5(uniqid(rand(), true));
+            $user->save();
+
+            $view = new View($this->router, __DIR__ . "/../../shared/views/email");
+            $message = $view->render("forget", [
+                "first_name" => $user->first_name,
+                "forget_link" => $this->router->route('auth.recover', ['code' => "{$user->email}|{$user->forget}"])
+            ]);
+
+            (new Email())->bootstrap(
+                "Recupere o seu acesso | " . CONF_SITE_NAME,
+                $message,
+                $user->email,
+                "{$user->first_name} {$user->last_name}"
+            )->send();
+
+            $json['message'] = $this->message->success("Acesse seu e-mail para recuperar a senha")->render();
+
+            echo json_encode($json);
+            return;
+
+        }
+
         $head = $this->seo->render(
             "Esqueci minha senha | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -107,6 +168,64 @@ class Auth extends Controller
      */
     public function recover(?array $data): void
     {
+        if (\user()) {
+            $this->router->redirect('app.search');
+        }
+
+        if (isset($data['csrf'])) {
+            /*if (!csrf_verify($data)) {
+                $json["message"] = $this->message->error("Ooops! Tente novamente mais tarde!")->render();
+                echo json_encode($json);
+                return;
+            }*/
+
+            if (empty($data["password"]) || empty($data["password_re"])) {
+                $json["message"] = $this->message->info("Informe e repita a senha para continuar")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            list($email, $code) = explode("|", $data["code"]);
+            $user = (new User())->find("email = :email", "email={$email}")->fetch();
+
+
+            if (!$user) {
+                $json["message"] = $this->message->error("A conta para recuperação não foi encontrada.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            if ($user->forget != $code) {
+                $json["message"] = $this->message->error("Desculpe, mas o código de verificação não é válido.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            if (!is_passwd($data['password'])) {
+                $min = CONF_PASSWD_MIN_LEN;
+                $max = CONF_PASSWD_MAX_LEN;
+                $json["message"] = $this->message->info("Sua senha deve ter entre {$min} e {$max} caracteres.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            if ($data['password'] != $data['password_re']) {
+                $json["message"] = $this->message->warning("Você informou duas senhas diferentes.")->render();
+                echo json_encode($json);
+                return;
+            }
+
+            $user->password = passwd($data['password']);
+            $user->forget = null;
+            $user->save();
+
+            (new Session())->unset('authforget');
+
+            $this->message->success("Senha alterada com sucesso! Acesse com a sua nova senha")->flash();
+            echo json_encode(["redirect" => $this->router->route('auth.login')]);
+            return;
+        }
+
         $head = $this->seo->render(
             "Restaurar senha | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -117,6 +236,7 @@ class Auth extends Controller
 
         echo $this->view->render("auth/recover", [
             "head" => $head,
+            "code" => $data["code"]
         ]);
     }
 

@@ -217,13 +217,13 @@ class App extends Controller
                 $params .= "&number_expense=" . urlencode("%{$number_expense}%");
             }
             if (!empty(trim($date_start)) && is_date($date_start) && !empty(trim($date_end)) && is_date($date_end)) {
-                $date_start = date_fmt($date_start, 'Y - m - d');
-                $date_end = date_fmt($date_end, 'Y - m - d');
+                $date_start = date_fmt($date_start, 'Y-m-d');
+                $date_end = date_fmt($date_end, 'Y-m-d');
                 $where .= " AND date BETWEEN :date_start AND :date_end";
                 $params .= "&date_start={$date_start}&date_end={$date_end}";
             }
             if ((!empty($date_start) && is_date($date_start) && empty($date_end)) || ((!empty($date_end) && is_date($date_end) && empty($date_start)))) {
-                $date = !empty($date_start) ? date_fmt($date_start, 'Y - m - d') : date_fmt($date_end, 'Y - m - d');
+                $date = !empty($date_start) ? date_fmt($date_start, 'Y-m-d') : date_fmt($date_end, 'Y-m-d');
                 $where .= " AND date = :date";
                 $params .= "&date={$date}";
             }
@@ -251,7 +251,7 @@ class App extends Controller
                 $params .= "&h=%{$historical}%";
             }
 
-            $expenses = $expense->find("created_at IS NOT NULL{$where}", "{$params}");
+            $expenses = $expense->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
 
             $pager = new Pager($this->router->route('app.expenses', [
                 'filter' => 's',
@@ -267,7 +267,7 @@ class App extends Controller
             ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
             $pager->pager($expenses->count(), 30, $page);
         } else {
-            $xpenses = $expense->find();
+            $xpenses = $expense->find('id_company = :id_company', "id_company={$this->company->id}");
 
             $pager = new Pager($this->router->route('app.expenses',
                 ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
@@ -303,6 +303,99 @@ class App extends Controller
             $this->router->redirect("app.search");
         }
 
+        if (isset($data['action']) && $data['action'] == "send_document_email") {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!is_email($data['email'])) {
+                $json['message_warning'] = "Preencha o campo com um e-mail válido";
+                echo json_encode($json);
+                return;
+            }
+            if (!$bidding = $bidding->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja encaminhar por e-mail";
+                echo json_encode($json);
+                return;
+            }
+            //Faz o envio do e-mail
+            $email = new \Source\Support\Email();
+            $view = new \Source\Core\View($this->router, __DIR__ . "/../../shared/views/email");
+            $subject = "[LICITAÇÃO] N° do processo {$bidding->number_process}";
+            $message = "<p>{$this->user->first_name} te encaminhou este documento.</p>
+                        <p>Para abrir o arquivo, basta clicar no link abaixo</p>
+                        <p><a target='_blank' href='" . storage($bidding->document_name, $this->company->id . "/" . CONF_UPLOAD_BIDDING) . "'>ABRIR DOCUMENTO</a></p>            
+";
+            $body = $view->render("mail", [
+                "subject" => $subject,
+                "message" => $message
+            ]);
+            $email->bootstrap(
+                $subject,
+                $body,
+                $data['email'],
+                ''
+            )->send();
+            $this->message->success("Documento encaminhado com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
+        }
+
+        $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
+        $where = "";
+        $params = "";
+
+        if (isset($_GET['filter']) && $_GET['filter'] == 's') {
+            $number_process = filter_input(INPUT_GET, 'number_process', FILTER_SANITIZE_STRIPPED);
+            $date_start = filter_input(INPUT_GET, 'date_start', FILTER_SANITIZE_STRIPPED);
+            $date_end = filter_input(INPUT_GET, 'date_end', FILTER_SANITIZE_STRIPPED);
+            $modality = filter_input(INPUT_GET, 'modality', FILTER_SANITIZE_NUMBER_INT);
+            $object = filter_input(INPUT_GET, 'object', FILTER_SANITIZE_STRIPPED);
+
+            if (!empty(trim($number_process))) {
+                $where .= " AND number_process LIKE :number_process";
+                $params .= "&number_process=" . urlencode("%{$number_process}%");
+            }
+            if (!empty(trim($date_start)) && is_date($date_start) && !empty(trim($date_end)) && is_date($date_end)) {
+                $date_start = date_fmt($date_start, 'Y-m-d');
+                $date_end = date_fmt($date_end, 'Y-m-d');
+                $where .= " AND date BETWEEN :date_start AND :date_end";
+                $params .= "&date_start={$date_start}&date_end={$date_end}";
+            }
+            if ((!empty($date_start) && is_date($date_start) && empty($date_end)) || ((!empty($date_end) && is_date($date_end) && empty($date_start)))) {
+                $date = !empty($date_start) ? date_fmt($date_start, 'Y-m-d') : date_fmt($date_end, 'Y-m-d');
+                $where .= " AND date = :date";
+                $params .= "&date={$date}";
+            }
+            if (!empty(trim($modality))) {
+                $where .= " AND modality = :modality";
+                $params .= "&modality={$modality}";
+            }
+            if (!empty(trim($object))) {
+                $where .= " AND object LIKE :object";
+                $params .= "&object=" . urlencode("%{$object}%");
+            }
+
+            $biddings = $bidding->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
+
+            $pager = new Pager($this->router->route('app.bidding', [
+                'filter' => 's',
+                'number_process' => $number_process,
+                'date_start' => $date_start,
+                'date_end' => $date_end,
+                'modality' => $modality,
+                'object' => $object,
+                'page' => ""
+            ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($biddings->count(), 30, $page, 2);
+        } else {
+            $biddings = $bidding->find('id_company = :id_company', "id_company={$this->company->id}");
+
+            $pager = new Pager($this->router->route('app.bidding',
+                ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($biddings->count(), 30, $page, 2);
+
+        }
+
+        $biddings = $bidding->offset($pager->offset())->limit($pager->limit())->fetch(true);
+
         $head = $this->seo->render(
             "Licitação | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -313,6 +406,8 @@ class App extends Controller
 
         echo $this->view->render("bidding", [
             "head" => $head,
+            "biddings" => $biddings,
+            "render" => $pager->render()
         ]);
     }
 
@@ -327,6 +422,84 @@ class App extends Controller
             $this->router->redirect("app.search");
         }
 
+        if (isset($data['action']) && $data['action'] == "send_document_email") {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!is_email($data['email'])) {
+                $json['message_warning'] = "Preencha o campo com um e-mail válido";
+                echo json_encode($json);
+                return;
+            }
+            if (!$contract = $contract->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja encaminhar por e-mail";
+                echo json_encode($json);
+                return;
+            }
+            //Faz o envio do e-mail
+            $email = new \Source\Support\Email();
+            $view = new \Source\Core\View($this->router, __DIR__ . "/../../shared/views/email");
+            $subject = "[CONTRATO] N° do contrato {$contract->number_contract}";
+            $message = "<p>{$this->user->first_name} te encaminhou este documento.</p>
+                        <p>Para abrir o arquivo, basta clicar no link abaixo</p>
+                        <p><a target='_blank' href='" . storage($contract->document_name, $this->company->id . "/" . CONF_UPLOAD_CONTRACT) . "'>ABRIR DOCUMENTO</a></p>            
+";
+            $body = $view->render("mail", [
+                "subject" => $subject,
+                "message" => $message
+            ]);
+            $email->bootstrap(
+                $subject,
+                $body,
+                $data['email'],
+                ''
+            )->send();
+            $this->message->success("Documento encaminhado com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
+        }
+
+        $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
+        $where = "";
+        $params = "";
+
+        if (isset($_GET['filter']) && $_GET['filter'] == 's') {
+            $number_contract = filter_input(INPUT_GET, 'number_contract', FILTER_SANITIZE_STRIPPED);
+            $type = filter_input(INPUT_GET, 'type', FILTER_SANITIZE_NUMBER_INT);
+            $object = filter_input(INPUT_GET, 'object', FILTER_SANITIZE_STRIPPED);
+
+            if (!empty(trim($number_contract))) {
+                $where .= " AND number_contract LIKE :number_contract";
+                $params .= "&number_contract=" . urlencode("%{$number_contract}%");
+            }
+            if (!empty(trim($type))) {
+                $where .= " AND type = :type";
+                $params .= "&type={$type}";
+            }
+            if (!empty(trim($object))) {
+                $where .= " AND object LIKE :object";
+                $params .= "&object=" . urlencode("%{$object}%");
+            }
+
+            $contracts = $contract->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
+
+            $pager = new Pager($this->router->route('app.contract', [
+                'filter' => 's',
+                'number_contract' => $number_contract,
+                'type' => $type,
+                'object' => $object,
+                'page' => ""
+            ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($contracts->count(), 30, $page, 2);
+        } else {
+            $contracts = $contract->find('id_company = :id_company', "id_company={$this->company->id}");
+
+            $pager = new Pager($this->router->route('app.contract',
+                ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($contracts->count(), 30, $page, 2);
+
+        }
+
+        $contracts = $contract->offset($pager->offset())->limit($pager->limit())->fetch(true);
+
         $head = $this->seo->render(
             "Contrato | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -337,6 +510,8 @@ class App extends Controller
 
         echo $this->view->render("contract", [
             "head" => $head,
+            "contracts" => $contracts,
+            "render" => $pager->render()
         ]);
     }
 
@@ -402,13 +577,13 @@ class App extends Controller
                 $params .= "&number=" . urlencode("%{$number}%");
             }
             if (!empty(trim($date_start)) && is_date($date_start) && !empty(trim($date_end)) && is_date($date_end)) {
-                $date_start = date_fmt($date_start, 'Y - m - d');
-                $date_end = date_fmt($date_end, 'Y - m - d');
+                $date_start = date_fmt($date_start, 'Y-m-d');
+                $date_end = date_fmt($date_end, 'Y-m-d');
                 $where .= " AND date BETWEEN :date_start AND :date_end";
                 $params .= "&date_start={$date_start}&date_end={$date_end}";
             }
             if ((!empty($date_start) && is_date($date_start) && empty($date_end)) || ((!empty($date_end) && is_date($date_end) && empty($date_start)))) {
-                $date = !empty($date_start) ? date_fmt($date_start, 'Y - m - d') : date_fmt($date_end, 'Y - m - d');
+                $date = !empty($date_start) ? date_fmt($date_start, 'Y-m-d') : date_fmt($date_end, 'Y-m-d');
                 $where .= " AND date = :date";
                 $params .= "&date={$date}";
             }
@@ -421,7 +596,7 @@ class App extends Controller
                 $params .= "&e=%{$ementa}%";
             }
 
-            $legislations = $legislation->find("created_at IS NOT NULL{$where}", "{$params}");
+            $legislations = $legislation->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
 
             $pager = new Pager($this->router->route('app.legislation', [
                 'filter' => 's',
@@ -434,7 +609,7 @@ class App extends Controller
             ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
             $pager->pager($legislations->count(), 30, $page);
         } else {
-            $legislations = $legislation->find();
+            $legislations = $legislation->find('id_company = :id_company', "id_company={$this->company->id}");
 
             $pager = new Pager($this->router->route('app.legislation',
                 ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
@@ -528,7 +703,7 @@ class App extends Controller
             }
 
 
-            $reports = $report->find("created_at IS NOT NULL{$where}", "{$params}");
+            $reports = $report->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
 
             $pager = new Pager($this->router->route('app.report', [
                 'filter' => 's',
@@ -537,13 +712,13 @@ class App extends Controller
                 'type' => $type,
                 'page' => ""
             ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
-            $pager->pager($reports->count(), 30, $page);
+            $pager->pager($reports->count(), 30, $page, 2);
         } else {
-            $reports = $report->find();
+            $reports = $report->find('id_company = :id_company', "id_company={$this->company->id}");
 
             $pager = new Pager($this->router->route('app.report',
                 ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
-            $pager->pager($reports->count(), 30, $page);
+            $pager->pager($reports->count(), 30, $page, 2);
 
         }
 

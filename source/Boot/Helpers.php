@@ -747,20 +747,124 @@ function type_legislation(string $type)
 {
     switch ($type) {
         case "1":
-            return "Portaria";
+            return "Leis";
+            break;
+        case "2":
+            return "Decretos";
+            break;
+        case "3":
+            return "Portarias";
+            break;
+        case "4":
+            return "Indicação";
+            break;
+        case "5":
+            return "Moção";
             break;
         default:
             return $type;
     }
 }
 
+/**
+ * @param string $type
+ * @return string
+ */
 function type_report(string $type)
 {
     switch ($type) {
         case "1":
             return "Contábil";
             break;
+        case "2":
+            return "Diário de Obra";
+            break;
+        case "3":
+            return "Recursos Humanos";
+            break;
         default:
             return $type;
+    }
+}
+
+
+function type_bidding(string $type): string
+{
+    switch ($type) {
+        case "1":
+            return "Licitação";
+            break;
+        case "2":
+            return "Contratos";
+            break;
+        case "3":
+            return "Aditivos";
+            break;
+        case "4":
+            return "Rescisão";
+            break;
+        case "5":
+            return "Atas de RP";
+            break;
+        default:
+            return "";
+    }
+}
+
+function modality_bidding(string $modality): string
+{
+    switch ($modality) {
+        case "1":
+            return "Pregão Presencial";
+            break;
+        case "2":
+            return "Pregão Eletrônico";
+            break;
+        case "3":
+            return "Carta Convite";
+            break;
+        case "4":
+            return "Tomada de Preço";
+            break;
+        case "5":
+            return "Concorrência Pública";
+            break;
+        case "6":
+            return "Leilão";
+            break;
+        case "7":
+            return "Concurso";
+            break;
+        case "8":
+            return "Adesão à Registro de Preços";
+            break;
+        case "9":
+            return "Inexigibilidade";
+            break;
+        case "10":
+            return "Dispensa";
+            break;
+        default:
+            return "";
+    }
+}
+
+function type_contract(string $type): string
+{
+    switch ($type) {
+        case "2":
+            return "Contrato";
+            break;
+        case "3":
+            return "Aditivo";
+            break;
+        case "4":
+            return "Rescisão";
+            break;
+        case "5":
+            return "Ata de RP";
+            break;
+        default:
+            return "";
     }
 }

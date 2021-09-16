@@ -15,6 +15,8 @@ final class Reports extends AbstractMigration
             ->addColumn('type', 'integer', ['limit' => MysqlAdapter::INT_TINY])
             ->addColumn('document_name', 'string')
             ->addColumn('total_page', 'integer')
+            ->addColumn('id_company', 'integer')
+            ->addForeignKey('id_company', 'companies', 'id',['delete' => 'CASCADE', 'update' => 'CASCADE'])
             ->addTimestamps()
             ->create();
     }

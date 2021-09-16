@@ -45,8 +45,20 @@
                                 <label>Tipo</label>
                                 <select name="type" class="form-control">
                                     <option value=""></option>
-                                    <option <?= isset($_GET['type']) && !empty($_GET['type']) ? "selected" : "" ?>
-                                            value="1">Portaria
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "1" ? "selected" : "" ?>
+                                            value="1">Leis
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "2" ? "selected" : "" ?>
+                                            value="2">Decretos
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "3" ? "selected" : "" ?>
+                                            value="3">Portarias
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "4" ? "selected" : "" ?>
+                                            value="4">Indicação
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "5" ? "selected" : "" ?>
+                                            value="5">Moção
                                     </option>
                                 </select>
                             </div>
@@ -143,7 +155,7 @@
                     <p><span class="font-weight-bolder">Número: </span><?= $legislation->number ?></p>
                     <p><span class="font-weight-bolder">Tipo: </span><?= type_legislation($legislation->type) ?></p>
                     <p><span class="font-weight-bolder">Data: </span><?= date_fmt($legislation->date, 'd/m/Y') ?></p>
-                    <p><span class="font-weight-bolder">Ementa: </span>R$<?= $legislation->ementa ?></p>
+                    <p><span class="font-weight-bolder">Ementa: </span><?= $legislation->ementa ?></p>
                 </div>
             </div>
         </div>

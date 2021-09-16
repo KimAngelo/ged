@@ -4,16 +4,23 @@
 namespace Source\Models\Modules;
 
 
+use CoffeeCode\DataLayer\DataLayer;
+
 /**
  * Class Bidding
  * @package Source\Models\Modules
  */
-class Bidding
+class Bidding extends DataLayer
 {
     /**
      * Licitação
      */
     const ID_BIDDING = 2;
+
+    public function __construct()
+    {
+        parent::__construct('biddings', ['type', 'number_process', 'date', 'object', 'document_name', 'total_page']);
+    }
 
     /**
      * @param array $roles
