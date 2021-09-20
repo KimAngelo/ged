@@ -59,6 +59,12 @@ class Admin extends Controller
             exit();
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            $index->delete($this->company->id, $data['file_name'], $data['module']);
+            exit();
+        }
+
         $head = $this->seo->render(
             "Indexar | " . CONF_SITE_NAME,
             CONF_SITE_DESC,

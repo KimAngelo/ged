@@ -27,8 +27,11 @@
                                             <input type="hidden" name="module" value="<?= $item['module'] ?>">
                                             <button type="submit" class="btn btn-theme mr-2">Indexar</button>
                                         </form>
-                                        <form action="">
-                                            <button type="button" class="btn btn-danger">Apagar</button>
+                                        <form action="" method="post" class="form">
+                                            <input type="hidden" name="action" value="delete">
+                                            <input type="hidden" name="file_name" value="<?= $item['name'] ?>">
+                                            <input type="hidden" name="module" value="<?= $item['module'] ?>">
+                                            <button type="submit" class="btn btn-danger">Apagar</button>
                                         </form>
                                     </div>
                                 </th>

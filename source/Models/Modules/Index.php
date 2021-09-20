@@ -62,6 +62,53 @@ class Index
         return $file;
     }
 
+    public function delete(int $company, string $file, string $module)
+    {
+
+        $path = __DIR__ . "/../../../storage/company/{$company}/";
+        $file = __DIR__ . "/../../../storage/company/{$company}/{$file}";
+
+        if (file_exists($file)) {
+            $xml = simplexml_load_file($file);
+
+            //Transforma XML em array
+            $array = [];
+            $key = 0;
+            foreach ($xml->document as $document) {
+                $array[$key] = [];
+                foreach ($document as $field) {
+                    $name = trim($field['name']);
+                    $array[$key][$name] = trim($field['value']);
+                }
+                $key += 1;
+            }
+
+            //Verifica primeiro se os arquivos existem.
+            foreach ($array as $item) {
+                if (!file_exists($path . $item['Document Filename'])) {
+                    $json['message'] = $this->message->warning("O arquivo {$item['Document Filename']} não foi encontrado")->render();
+                    echo json_encode($json);
+                    return;
+                }
+            }
+
+            //Apaga os arquivos do diretório raiz
+            foreach ($array as $item) {
+                $document = $path . $item['Document Filename'];
+                unlink($document);
+            }
+
+            unlink($file);
+            $this->message->success("Arquivos apagados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
+        }
+
+        $json['message'] = $this->message->error("O arquivo não existe")->render();
+        echo json_encode($json);
+        return;
+    }
+
     /**
      * @param int $company
      * @param string $file
@@ -373,7 +420,7 @@ class Index
         }
 
         //Apaga os arquivos do diretório raiz
-        foreach ($array as $item){
+        foreach ($array as $item) {
             $document = $path . $item['Document Filename'];
             unlink($document);
         }
