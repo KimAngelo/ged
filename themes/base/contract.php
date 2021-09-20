@@ -14,6 +14,7 @@
                 <?= flash() ?>
 
                 <form action="" method="get">
+                    <input type="hidden" name="filter" value="s">
                     <div class="row">
                         <div class="col-md-3">
                             <div class="form-group">

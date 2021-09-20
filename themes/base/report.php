@@ -42,13 +42,13 @@
                                             value="1">Contábil
                                     </option>
                                     <option <?= isset($_GET['type']) && $_GET['type'] == "2" ? "selected" : "" ?>
-                                            value="">Diário de Obra
+                                            value="2">Diário de Obra
                                     </option>
                                     <option <?= isset($_GET['type']) && $_GET['type'] == "3" ? "selected" : "" ?>
-                                            value="">Recursos Humanos
+                                            value="3">Recursos Humanos
                                     </option>
                                     <option <?= isset($_GET['type']) && $_GET['type'] == "4" ? "selected" : "" ?>
-                                            value="">Licitação
+                                            value="4">Licitação
                                     </option>
                                 </select>
                             </div>

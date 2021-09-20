@@ -782,6 +782,9 @@ function type_report(string $type)
         case "3":
             return "Recursos Humanos";
             break;
+        case "4":
+            return "Licitação";
+            break;
         default:
             return $type;
     }

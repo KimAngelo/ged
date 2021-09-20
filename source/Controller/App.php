@@ -350,8 +350,8 @@ class App extends Controller
             $object = filter_input(INPUT_GET, 'object', FILTER_SANITIZE_STRIPPED);
 
             if (!empty(trim($number_process))) {
-                $where .= " AND number_process LIKE :number_process";
-                $params .= "&number_process=" . urlencode("%{$number_process}%");
+                $where .= " AND (number_process LIKE :number_process or number_modality LIKE :number_modality)";
+                $params .= "&number_process=" . urlencode("%{$number_process}%")."&number_modality=".urlencode("%{$number_process}%");
             }
             if (!empty(trim($date_start)) && is_date($date_start) && !empty(trim($date_end)) && is_date($date_end)) {
                 $date_start = date_fmt($date_start, 'Y-m-d');
