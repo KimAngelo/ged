@@ -524,4 +524,34 @@ class Admin extends Controller
             "companies_user" => explode(';', $user->companies)
         ]);
     }
+
+    public function deleteUser(array $data): void
+    {
+        if (isset($data['action']) && $data['action'] == "delete") {
+            $id_user = filter_var($data['id_user'], FILTER_VALIDATE_INT);
+
+            if ($this->user->id == $id_user) {
+                $json['message_warning'] = "Você não pode excluir seu próprio usuário";
+                echo json_encode($json);
+                return;
+            }
+
+            if (!$user = (new User())->findById($id_user)) {
+                $json['message_warning'] = "Usuário não encontrado";
+                echo json_encode($json);
+                return;
+            }
+            if ($user->destroy()) {
+                $this->message->success("Usuário apagado com sucesso!")->flash();
+                echo json_encode(["refresh" => true]);
+                return;
+            }
+            if ($user->fail()) {
+                $json['message_error'] = "Erro ao apagar o usuário";
+                echo json_encode($json);
+                return;
+            }
+
+        }
+    }
 }

@@ -78,7 +78,8 @@
                         </div>
                         <div class="col-12">
                             <button class="btn btn-lg btn-theme" type="submit">Buscar usuário</button>
-                            <button type="button" onclick="clearForm('form')" class="btn btn-lg btn-light">Limpar</button>
+                            <button type="button" onclick="clearForm('form')" class="btn btn-lg btn-light">Limpar
+                            </button>
                         </div>
                     </div>
                 </form>
@@ -142,16 +143,20 @@
                             <i aria-hidden="true" class="ki ki-close"></i>
                         </button>
                     </div>
-                    <div class="modal-body">
-                        <p>Tem certeza que deseja exlcuir o usuário <strong><?= $user->first_name ?></strong> ?</p>
-                        <p>Todos os seus dados serão apagados e não poderão mais ser acessados!</p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">
-                            Cancelar
-                        </button>
-                        <button type="submit" class="btn btn-danger font-weight-bold">Sim, excluir!</button>
-                    </div>
+                    <form action="<?= $router->route("admin.deleteUser") ?>" class="form" method="post">
+                        <input type="hidden" name="action" value="delete">
+                        <input type="hidden" name="id_user" value="<?= $user->id ?>">
+                        <div class="modal-body">
+                            <p>Tem certeza que deseja exlcuir o usuário <strong><?= $user->first_name ?></strong> ?</p>
+                            <p>Todos os seus dados serão apagados e não poderão mais ser acessados!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light-primary font-weight-bold" data-dismiss="modal">
+                                Cancelar
+                            </button>
+                            <button type="submit" class="btn btn-danger font-weight-bold">Sim, excluir!</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
