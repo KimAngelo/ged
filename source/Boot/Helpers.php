@@ -871,3 +871,20 @@ function type_contract(string $type): string
             return "";
     }
 }
+
+function type_convention(string $type): string
+{
+    switch ($type) {
+        case "1":
+            return "Convênio";
+            break;
+        case "2":
+            return "Movimentação do Convênio";
+            break;
+        case "3":
+            return "Prestação de Contas";
+            break;
+        default:
+            return "";
+    }
+}

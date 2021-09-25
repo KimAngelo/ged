@@ -4,17 +4,24 @@
 namespace Source\Models\Modules;
 
 
+use CoffeeCode\DataLayer\DataLayer;
+
 /**
  * Class Convention
  * @package Source\Models\Modules
  * CONVÊNIO
  */
-class Convention
+class Convention extends DataLayer
 {
     /**
      *
      */
     const ID_CONVENTION = 6;
+
+    public function __construct()
+    {
+        parent::__construct('convention', ['type', 'number', 'object', 'document_name', 'total_page', 'id_company']);
+    }
 
     /**
      * @param array $roles

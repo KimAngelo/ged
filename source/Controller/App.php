@@ -750,6 +750,90 @@ class App extends Controller
             $this->router->redirect("app.search");
         }
 
+        if (isset($data['action']) && $data['action'] == "send_document_email") {
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!is_email($data['email'])) {
+                $json['message_warning'] = "Preencha o campo com um e-mail válido";
+                echo json_encode($json);
+                return;
+            }
+            if (!$convention = $convention->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja encaminhar por e-mail";
+                echo json_encode($json);
+                return;
+            }
+            //Faz o envio do e-mail
+            $email = new \Source\Support\Email();
+            $view = new \Source\Core\View($this->router, __DIR__ . "/../../shared/views/email");
+            $subject = "[CONVÊNIO] documento número {$convention->number}";
+            $message = "<p>Olá</p>
+                        <p>{$this->user->first_name} te encaminhou um documento através do E-Arquivo, para visualizar e baixar, clique no link descrito abaixo!.</p>
+                        <p><a target='_blank' href='" . storage($convention->document_name, $this->company->id . "/" . CONF_UPLOAD_CONVENTION) . "'>ABRIR DOCUMENTO</a></p>            
+                        ";
+            $body = $view->render("mail", [
+                "subject" => $subject,
+                "message" => $message
+            ]);
+            $email->bootstrap(
+                $subject,
+                $body,
+                $data['email'],
+                ''
+            )->send();
+            $this->message->success("Documento encaminhado com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
+        }
+
+        $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
+        $where = "";
+        $params = "";
+
+        if (isset($_GET['filter']) && $_GET['filter'] == 's') {
+            $number = filter_input(INPUT_GET, 'number', FILTER_SANITIZE_STRIPPED);
+            $type = filter_input(INPUT_GET, 'type', FILTER_VALIDATE_INT);
+            $object = filter_input(INPUT_GET, 'object', FILTER_SANITIZE_STRIPPED);
+            $grantor = filter_input(INPUT_GET, 'grantor', FILTER_SANITIZE_STRIPPED);
+
+            if (!empty(trim($number))) {
+                $where .= " AND number LIKE :number";
+                $params .= "&number=" . urlencode("%{$number}%");
+            }
+            if (!empty(trim($type))) {
+                $where .= " AND type = :t";
+                $params .= "&t={$type}";
+            }
+            if (!empty(trim($object))) {
+                $where .= " AND object LIKE :object";
+                $params .= "&object=" . urlencode("%{$object}%");
+            }
+            if (!empty(trim($grantor))) {
+                $where .= " AND grantor LIKE :grantor";
+                $params .= "&grantor=" . urlencode("%{$grantor}%");
+            }
+
+            $conventions = $convention->find("id_company = :id_company{$where}", "id_company={$this->company->id}{$params}");
+
+            $pager = new Pager($this->router->route('app.convention', [
+                'filter' => 's',
+                'number' => $number,
+                'type' => $type,
+                'object' => $object,
+                'grantor' => $grantor,
+                'page' => ""
+            ]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($conventions->count(), 30, $page, 2);
+        } else {
+            $conventions = $convention->find('id_company = :id_company', "id_company={$this->company->id}");
+
+            $pager = new Pager($this->router->route('app.convention',
+                ['page' => ""]), "Página", ["Primeira Página", "«"], ["Última Página", "»"]);
+            $pager->pager($conventions->count(), 30, $page, 2);
+
+        }
+
+        $conventions = $conventions->offset($pager->offset())->limit($pager->limit())->fetch(true);
+
         $head = $this->seo->render(
             "Convênio | " . CONF_SITE_NAME,
             CONF_SITE_DESC,
@@ -760,6 +844,8 @@ class App extends Controller
 
         echo $this->view->render("convention", [
             "head" => $head,
+            "conventions" => $conventions,
+            "render" => $pager->render()
         ]);
     }
 

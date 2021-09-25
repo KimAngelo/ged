@@ -133,6 +133,9 @@ class Index
                 case "licitacao":
                     $this->bidding_contract();
                     break;
+                case "convenio":
+                    $this->convention();
+                    break;
                 default:
                     $json['message'] = $this->message->error("Esse modulo não foi implementado. Entre em contato com o suporte")->render();
                     echo json_encode($json);
@@ -588,9 +591,103 @@ class Index
     /**
      *
      */
-    private function bidding(object $bidding)
+    private function convention()
     {
-        var_dump($bidding);
-        exit();
+        set_time_limit(0);
+        $path = __DIR__ . "/../../../storage/company/{$this->company}/";
+        $file = __DIR__ . "/../../../storage/company/{$this->company}/{$this->file}";
+        $xml = simplexml_load_file($file);
+
+        //Transforma XML em array
+        $array = [];
+        $key = 0;
+        foreach ($xml->document as $document) {
+            $array[$key] = [];
+            foreach ($document as $field) {
+                $name = trim($field['name']);
+                $array[$key][$name] = trim($field['value']);
+            }
+            $key += 1;
+        }
+
+        //Verifica primeiro se os arquivos existem. Não foi possível colocar dentro do mesmo foreach
+        foreach ($array as $item) {
+            if (!file_exists($path . $item['Document Filename'])) {
+                $json['message'] = $this->message->warning("O arquivo {$item['Document Filename']} não foi encontrado")->render();
+                echo json_encode($json);
+                return;
+            }
+        }
+
+        //Faz a validação dos campos
+        foreach ($array as $item) {
+            if (empty(trim($item['Numero-Ano']))) {
+                $json['message'] = $this->message->warning("O campo número está em branco no arquivo {$item['Document Filename']}")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty(trim($item['Tipo'])) || !filter_var($item['Tipo'], FILTER_VALIDATE_INT)) {
+                $json['message'] = $this->message->warning("O campo tipo está em branco ou não é um número no documento {$item['Document Filename']}")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty(trim($item['Objeto']))) {
+                $json['message'] = $this->message->warning("O campo Objeto está em branco no documento {$item['Document Filename']}")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty(trim($item['Concedente']))) {
+                $json['message'] = $this->message->warning("O campo concedente está em branco no documento {$item['Document Filename']}")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty(trim($item['Valor'])) || !is_decimal($item['Valor'])) {
+                $json['message'] = $this->message->warning("O campo valor está em branco ou com formato inválido no documento {$item['Document Filename']}")->render();
+                echo json_encode($json);
+                return;
+            }
+            if (empty(trim($item['Data Ass'])) || !is_date($item['Data Ass'], 'd/m/Y')) {
+                $json['message'] = $this->message->warning("O campo data está em branco ou com formato inválido no documento {$item['Document Filename']}, o formato da data deve ser DD/MM/YYYY")->render();
+                echo json_encode($json);
+                return;
+            }
+        }
+
+        //Envia para o Storage
+        foreach ($array as $item) {
+            $document = $path . $item['Document Filename'];
+            $send_storage = (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_CONVENTION . $item['Document Filename'], ['application/pdf']);
+        }
+
+        //Salva no Banco de dados
+        foreach ($array as $item) {
+            $convention = new Convention();
+            $convention->type = $item['Tipo'];
+            $convention->number = $item['Numero-Ano'];
+            $convention->object = $item['Objeto'];
+            $convention->grantor = $item['Concedente'];
+            $convention->value = $item['Valor'];
+            $convention->date = date_fmt($item['Data Ass'], 'Y-m-d');
+            $convention->document_name = $item['Document Filename'];
+            $convention->total_page = $item['Page count in document'];
+            $convention->id_company = $this->company;
+            $convention->save();
+
+            $company = (new Company())->findById($this->company);
+            $company->convention_total_pages += $convention->total_page;
+            $company->convention_total_documents += 1;
+            $company->save();
+        }
+
+        //Apaga os arquivos do diretório raiz
+        foreach ($array as $item) {
+            $document = $path . $item['Document Filename'];
+            unlink($document);
+        }
+
+        unlink($file);
+        $this->message->success("Convênios anexados com sucesso!")->flash();
+        echo json_encode(['refresh' => true]);
+        return;
     }
 }
