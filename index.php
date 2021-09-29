@@ -46,6 +46,7 @@ $router->post("/esqueceu-senha", "Auth:forget", "auth.forget");
 $router->get("/recuperar/{code}", "Auth:recover", "auth.recover");
 $router->post("/recuperar", "Auth:recover", "auth.recover.post");
 $router->get("/sair", "Auth:logout", "auth.logout");
+$router->get("/teste", "Auth:test", "auth.test");
 
 //Selecionar empresa
 $router->get("/empresa", "Auth:company", "auth.company");

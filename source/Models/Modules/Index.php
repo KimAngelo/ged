@@ -222,7 +222,11 @@ class Index
         //Envia para o Storage
         foreach ($array as $item) {
             $document = $path . $item['Document Filename'];
-            (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_EXPENSE . $item['Document Filename'], ['application/pdf']);
+            if (!(new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_EXPENSE . $item['Document Filename'], ['application/pdf'])) {
+                $json['message'] = $this->message->warning("Erro ao enviar o documento {$item['Document Filename']} para Storage.")->render();
+                echo json_encode($json);
+                return;
+            }
         }
 
         //Salva no Banco de dados
@@ -239,6 +243,11 @@ class Index
             $expanse->total_page = $item['Page count in document'];
             $expanse->id_company = $this->company;
             $expanse->save();
+            if ($expanse->fail()) {
+                $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no Banco de dados.")->render();
+                echo json_encode($json);
+                return;
+            }
 
             $company = (new Company())->findById($this->company);
             $company->expense_total_pages += $expanse->total_page;
@@ -317,7 +326,11 @@ class Index
         //Envia para o Storage
         foreach ($array as $item) {
             $document = $path . $item['Document Filename'];
-            (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_LEGISLATION . $item['Document Filename'], ['application/pdf']);
+            if (!(new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_LEGISLATION . $item['Document Filename'], ['application/pdf'])) {
+                $json['message'] = $this->message->warning("Erro ao enviar o documento {$item['Document Filename']} para o Storage")->render();
+                echo json_encode($json);
+                return;
+            }
         }
 
         //Salva no Banco de dados
@@ -331,6 +344,11 @@ class Index
             $legislation->total_page = $item['Page count in document'];
             $legislation->id_company = $this->company;
             $legislation->save();
+            if ($legislation->fail()) {
+                $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no banco de dados")->render();
+                echo json_encode($json);
+                return;
+            }
 
             $company = (new Company())->findById($this->company);
             $company->legislation_total_pages += $legislation->total_page;
@@ -403,6 +421,11 @@ class Index
         foreach ($array as $item) {
             $document = $path . $item['Document Filename'];
             $send_storage = (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_REPORT . $item['Document Filename'], ['application/pdf']);
+            if (!$send_storage) {
+                $json['message'] = $this->message->warning("Erro ao enviar o documento {$item['Document Filename']} para o Storage")->render();
+                echo json_encode($json);
+                return;
+            }
         }
 
         //Salva no Banco de dados
@@ -415,6 +438,11 @@ class Index
             $report->total_page = $item['Page count in document'];
             $report->id_company = $this->company;
             $report->save();
+            if ($report->fail()) {
+                $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no banco de dados")->render();
+                echo json_encode($json);
+                return;
+            }
 
             $company = (new Company())->findById($this->company);
             $company->report_total_pages += $report->total_page;
@@ -522,11 +550,16 @@ class Index
             //Tipo Licitação
             if ($item['Tipo'] == '1') {
                 $document = $path . $item['Document Filename'];
-                (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_BIDDING . $item['Document Filename'], ['application/pdf']);
+                $sendStorage = (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_BIDDING . $item['Document Filename'], ['application/pdf']);
             } //Tipo Contrato
             else {
                 $document = $path . $item['Document Filename'];
-                (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_CONTRACT . $item['Document Filename'], ['application/pdf']);
+                $sendStorage = (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_CONTRACT . $item['Document Filename'], ['application/pdf']);
+            }
+            if (!$sendStorage) {
+                $json['message'] = $this->message->warning("Erro ao enviar o documento {$item['Document Filename']} para o Storage")->render();
+                echo json_encode($json);
+                return;
             }
         }
 
@@ -545,6 +578,11 @@ class Index
                 $bidding->total_page = $item['Page count in document'];
                 $bidding->id_company = $this->company;
                 $bidding->save();
+                if ($bidding->fail()) {
+                    $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no banco de dados")->render();
+                    echo json_encode($json);
+                    return;
+                }
 
                 $company = (new Company())->findById($this->company);
                 $company->bidding_total_pages += $bidding->total_page;
@@ -567,6 +605,11 @@ class Index
                 $contract->total_page = $item['Page count in document'];
                 $contract->id_company = $this->company;
                 $contract->save();
+                if ($contract->fail()) {
+                    $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no banco de dados")->render();
+                    echo json_encode($json);
+                    return;
+                }
 
                 $company = (new Company())->findById($this->company);
                 $company->contract_total_pages += $contract->total_page;
@@ -657,6 +700,11 @@ class Index
         foreach ($array as $item) {
             $document = $path . $item['Document Filename'];
             $send_storage = (new Upload())->sendFile($document, "{$this->company}/" . CONF_UPLOAD_CONVENTION . $item['Document Filename'], ['application/pdf']);
+            if (!$send_storage) {
+                $json['message'] = $this->message->warning("Erro ao enviar o documento {$item['Document Filename']} para o Storage")->render();
+                echo json_encode($json);
+                return;
+            }
         }
 
         //Salva no Banco de dados
@@ -672,6 +720,11 @@ class Index
             $convention->total_page = $item['Page count in document'];
             $convention->id_company = $this->company;
             $convention->save();
+            if ($convention->fail()) {
+                $json['message'] = $this->message->warning("Erro ao salvar o documento {$item['Document Filename']} no banco de dados")->render();
+                echo json_encode($json);
+                return;
+            }
 
             $company = (new Company())->findById($this->company);
             $company->convention_total_pages += $convention->total_page;

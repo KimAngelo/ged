@@ -17,7 +17,7 @@ class Company extends AbstractSeed
     {
         //Inserir primiera empresa de teste
         $data = [
-            'name' => 'Prefeitura de Londrina',
+            'name' => 'Empresa de Teste',
             'document' => '75.771.477/0001-70',
             'manager' => 'Kim Angelo',
             'type' => 'Prefeitura',

@@ -17,16 +17,30 @@ class User extends AbstractSeed
     {
         //Cria o primeiro usuário
         $data = [
-            'first_name' => 'Kim',
-            'last_name' => 'Angelo',
-            'email' => 'kim@g7company.com.br',
-            'password' => passwd('12345678'),
-            'phone' => '(43) 99654-0756',
-            'occupation' => 'Prefeito',
-            'status' => 1,
-            'admin' => 'true',
-            'roles' => '1;2;3;5',
-            'companies' => '1'
+            [
+                'first_name' => 'Kim',
+                'last_name' => 'Angelo',
+                'email' => 'kim@g7company.com.br',
+                'password' => passwd('12345678'),
+                'phone' => '(43) 99654-0756',
+                'occupation' => 'Prefeito',
+                'status' => 1,
+                'admin' => 'true',
+                'roles' => '1;2;3;5',
+                'companies' => '1'
+            ],
+            [
+                'first_name' => 'Rildonely',
+                'last_name' => 'Galiza',
+                'email' => 'gedtec@outlook.com',
+                'password' => passwd('12345678'),
+                'phone' => '',
+                'occupation' => 'Proprietário',
+                'status' => 1,
+                'admin' => 'true',
+                'roles' => '1;2;3;5',
+                'companies' => '1'
+            ]
         ];
         $user = $this->table('users');
         $user->insert($data)->saveData();

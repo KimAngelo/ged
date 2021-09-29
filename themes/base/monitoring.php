@@ -43,6 +43,11 @@
                         <th><?= $reports->report_total_pages ?></th>
                     </tr>
                     <tr>
+                        <th class="font-weight-bolder">Convênio</th>
+                        <th><?= $reports->convention_total_documents ?></th>
+                        <th><?= $reports->convention_total_pages ?></th>
+                    </tr>
+                    <tr>
                         <th class="font-weight-bolder">Total</th>
                         <th><?= $reports->total_documents ?></th>
                         <th><?= $reports->total_pages ?></th>

@@ -10,6 +10,7 @@ use Source\Core\View;
 use Source\Models\User;
 use Source\Models\UserCompany;
 use Source\Support\Email;
+use Source\Support\GoogleStorage;
 
 /**
  * Class Auth
@@ -288,5 +289,13 @@ class Auth extends Controller
             "head" => $head,
             "companies" => $user_company->find('id_user = :id', "id=" . \user()->id)->fetch(true)
         ]);
+    }
+
+    public function test()
+    {
+        $upload = new GoogleStorage();
+        var_dump($upload->write('teste.txt', 'teste.txt'));
+        $url = $upload->url('/teste.txt');
+        echo "<a targert='_blank' href='" . $url . "'>Teste</a>";
     }
 }

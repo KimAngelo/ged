@@ -85,6 +85,8 @@ class App extends Controller
             "legislation_total_pages" => $this->company->legislation_total_pages,
             "report_total_documents" => $this->company->report_total_documents,
             "report_total_pages" => $this->company->report_total_pages,
+            "convention_total_documents" => $this->company->convention_total_documents,
+            "convention_total_pages" => $this->company->convention_total_pages,
             "total_documents" => $total_documents,
             "total_pages" => $total_pages
         ];
@@ -351,7 +353,7 @@ class App extends Controller
 
             if (!empty(trim($number_process))) {
                 $where .= " AND (number_process LIKE :number_process or number_modality LIKE :number_modality)";
-                $params .= "&number_process=" . urlencode("%{$number_process}%")."&number_modality=".urlencode("%{$number_process}%");
+                $params .= "&number_process=" . urlencode("%{$number_process}%") . "&number_modality=" . urlencode("%{$number_process}%");
             }
             if (!empty(trim($date_start)) && is_date($date_start) && !empty(trim($date_end)) && is_date($date_end)) {
                 $date_start = date_fmt($date_start, 'Y-m-d');

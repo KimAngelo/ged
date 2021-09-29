@@ -2,3 +2,4 @@
 .env
 /storage/company/*
 key_storage.json
+key_storage_.json
