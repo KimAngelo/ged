@@ -33,6 +33,9 @@ class Auth extends Controller
      */
     public function login(?array $data): void
     {
+        $user = new User();
+        var_dump($user->find()->fetch());
+        exit();
         if (\user()) {
             $this->router->redirect('app.search');
         }
@@ -59,8 +62,6 @@ class Auth extends Controller
                 echo json_encode($json);
                 return;
             }
-            var_dump($data);
-            var_dump((new User())->find('email = :e AND status = :s', "e={$data['email']}&s=1"));
             $user = (new User())->find('email = :e AND status = :s', "e={$data['email']}&s=1")->fetch();
             if (!$user || !passwd_verify($data['password'], $user->password)) {
                 $json['message'] = $this->message->warning('E-mail e/ou senha incorreto, tente novamente')->render();
