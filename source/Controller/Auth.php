@@ -59,6 +59,8 @@ class Auth extends Controller
                 echo json_encode($json);
                 return;
             }
+            var_dump($data);
+            var_dump((new User())->find('email = :e AND status = :s', "e={$data['email']}&s=1"));
             $user = (new User())->find('email = :e AND status = :s', "e={$data['email']}&s=1")->fetch();
             if (!$user || !passwd_verify($data['password'], $user->password)) {
                 $json['message'] = $this->message->warning('E-mail e/ou senha incorreto, tente novamente')->render();
