@@ -33,9 +33,6 @@ class Auth extends Controller
      */
     public function login(?array $data): void
     {
-        $user = new User();
-        var_dump($user->find()->fetch());
-        exit();
         if (\user()) {
             $this->router->redirect('app.search');
         }
