@@ -70,10 +70,11 @@ class App extends Controller
     {
 
 
-        $total_documents = $this->company->expense_total_documents + $this->company->expense_total_documents +
-            $this->company->contract_total_documents + $this->company->legislation_total_documents + $this->company->report_total_documents;
+        $total_documents = $this->company->expense_total_documents + $this->company->bidding_total_documents +
+            $this->company->contract_total_documents + $this->company->convention_total_documents + $this->company->legislation_total_documents + $this->company->report_total_documents;
+
         $total_pages = $this->company->expense_total_pages + $this->company->bidding_total_pages + $this->company->contract_total_pages +
-            $this->company->legislation_total_pages + $this->company->report_total_pages;
+            $this->company->convention_total_pages + $this->company->legislation_total_pages + $this->company->report_total_pages;
         $reports = [
             "expense_total_documents" => $this->company->expense_total_documents,
             "expense_total_pages" => $this->company->expense_total_pages,
