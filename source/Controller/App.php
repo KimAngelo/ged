@@ -278,7 +278,7 @@ class App extends Controller
 
         }
 
-        $expanses = $expense->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $expanses = $expense->offset($pager->offset())->limit($pager->limit())->order('date DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Despesas | " . CONF_SITE_NAME,
@@ -397,7 +397,7 @@ class App extends Controller
 
         }
 
-        $biddings = $bidding->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $biddings = $bidding->offset($pager->offset())->limit($pager->limit())->order('date DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Licitação | " . CONF_SITE_NAME,
@@ -501,7 +501,7 @@ class App extends Controller
 
         }
 
-        $contracts = $contract->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $contracts = $contract->offset($pager->offset())->limit($pager->limit())->order('date DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Contrato | " . CONF_SITE_NAME,
@@ -620,7 +620,7 @@ class App extends Controller
 
         }
 
-        $legislations = $legislation->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $legislations = $legislation->offset($pager->offset())->limit($pager->limit())->order('id DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Legislação | " . CONF_SITE_NAME,
@@ -725,7 +725,7 @@ class App extends Controller
 
         }
 
-        $reports = $report->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $reports = $report->offset($pager->offset())->limit($pager->limit())->order('year DESC, id DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Relatórios | " . CONF_SITE_NAME,
@@ -835,7 +835,7 @@ class App extends Controller
 
         }
 
-        $conventions = $conventions->offset($pager->offset())->limit($pager->limit())->fetch(true);
+        $conventions = $conventions->offset($pager->offset())->limit($pager->limit())->order('id DESC')->fetch(true);
 
         $head = $this->seo->render(
             "Convênio | " . CONF_SITE_NAME,
