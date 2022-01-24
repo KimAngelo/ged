@@ -43,6 +43,8 @@ class App extends Controller
             $this->message->info("Selecione uma empresa para acessar o painel")->flash();
             $this->router->redirect('auth.company');
         }
+        echo "";
+        exit();
     }
 
     /**
