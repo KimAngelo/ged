@@ -171,8 +171,6 @@ class Admin extends Controller
                 return;
             }
             if (!empty($_FILES['certificate_pfx']['tmp_name'])) {
-
-
                 if ($_FILES['certificate_pfx']['type'] !== 'application/x-pkcs12') {
                     $json['message'] = $this->message->warning('Selecione um certificado digital .pfx')->render();
                     echo json_encode($json);
@@ -188,22 +186,19 @@ class Admin extends Controller
                 $certificate_name_pfx = md5(microtime()) . ".pfx";
                 $certificate_name_crt = md5(microtime()) . ".crt";
                 $save_crt = $path . $certificate_name_crt;
+
                 //Gera o arquivo .crt
-                $pfx_real = realpath($_FILES['certificate_pfx']['tmp_name']);
-                echo "openssl pkcs12 -in {$pfx_real} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}";
-                exit();
 
-                shell_exec("openssl pkcs12 -in {$pfx_real} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}");
-
-                if (!file_exists($save_crt)) {
-                    $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
+                if (!(new Upload())->sendCertificate($_FILES['certificate_pfx'], $certificate_name_pfx, $path)) {
+                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .pfx')->render();
                     echo json_encode($json);
                     return;
                 }
 
+                shell_exec("openssl pkcs12 -in " . realpath($path) . "/{$certificate_name_pfx} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}");
 
-                if (!(new Upload())->sendCertificate($_FILES['certificate_pfx'], $certificate_name_pfx, $path)) {
-                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .pfx')->render();
+                if (!file_exists($save_crt)) {
+                    $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
                     echo json_encode($json);
                     return;
                 }
