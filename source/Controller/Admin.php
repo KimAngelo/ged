@@ -194,10 +194,10 @@ class Admin extends Controller
                     echo json_encode($json);
                     return;
                 }
-
-                $result_shell = exec("openssl pkcs12 -in " . realpath($path) . "/{$certificate_name_pfx} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}");
-                var_dump($result_shell);
-                exit();
+                $pfx_shell = realpath($path) . "/{$certificate_name_pfx}";
+                $crt_shell = realpath($path) . "/{$certificate_name_crt}";
+                shell_exec("openssl pkcs12 -in {$pfx_shell} -out {$crt_shell} -nodes -passin pass:{$data['certificate_password']}");
+                sleep(2);
                 if (!file_exists($save_crt)) {
                     $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
                     echo json_encode($json);
