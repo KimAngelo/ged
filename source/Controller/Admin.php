@@ -190,6 +190,9 @@ class Admin extends Controller
                 $save_crt = $path . $certificate_name_crt;
                 //Gera o arquivo .crt
                 $pfx_real = realpath($_FILES['certificate_pfx']['tmp_name']);
+                echo "openssl pkcs12 -in {$pfx_real} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}";
+                exit();
+
                 shell_exec("openssl pkcs12 -in {$pfx_real} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}");
 
                 if (!file_exists($save_crt)) {
