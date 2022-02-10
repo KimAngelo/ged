@@ -1,5 +1,8 @@
 /vendor
 .env
 /storage/company/*
+/storage/certificados/*
+/storage/tmp/*
 key_storage.json
 key_storage_.json
+docker/*

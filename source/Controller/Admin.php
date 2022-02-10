@@ -8,6 +8,7 @@ use Source\Core\Controller;
 use Source\Core\Session;
 use Source\Models\Company;
 use Source\Models\Modules\Index;
+use Source\Models\Upload;
 use Source\Models\User;
 use Source\Models\UserCompany;
 use Source\Support\Pager;
@@ -169,11 +170,82 @@ class Admin extends Controller
                 echo json_encode($json);
                 return;
             }
+            if (!empty($_FILES['certificate_pfx']['tmp_name'])) {
+
+
+                if ($_FILES['certificate_pfx']['type'] !== 'application/x-pkcs12') {
+                    $json['message'] = $this->message->warning('Selecione um certificado digital .pfx')->render();
+                    echo json_encode($json);
+                    return;
+                }
+                //Verifica se enviou a senha
+                if (empty(trim($data['certificate_password']))) {
+                    $json['message'] = $this->message->warning('Digite a senha do certificado digital')->render();
+                    echo json_encode($json);
+                    return;
+                }
+                $path = __DIR__ . '/../../storage/certificados/';
+                $certificate_name_pfx = md5(microtime()) . ".pfx";
+                $certificate_name_crt = md5(microtime()) . ".crt";
+                $save_crt = $path . $certificate_name_crt;
+
+                //Gera o arquivo .crt
+                $pfx_real = realpath($_FILES['certificate_pfx']['tmp_name']);
+                shell_exec("openssl pkcs12 -in {$pfx_real} -out $save_crt -nodes -passin pass:{$data['certificate_password']}");
+
+                if (!file_exists($save_crt)) {
+                    $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
+                    echo json_encode($json);
+                    return;
+                }
+
+
+                if (!(new Upload())->sendCertificate($_FILES['certificate_pfx'], $certificate_name_pfx, $path)) {
+                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .pfx')->render();
+                    echo json_encode($json);
+                    return;
+                }
+
+                //Verifica se já exisita um certificado digital, aí apaga o anterior
+                if (!empty($company->certificate_pfx) && $company->certificate_crt) {
+                    unlink($path . $company->certificate_pfx);
+                    unlink($path . $company->certificate_crt);
+                }
+
+                $company->certificate_pfx = $certificate_name_pfx;
+                $company->certificate_crt = $certificate_name_crt;
+            }
+
+            /*if (!empty($_FILES['certificate_key']['tmp_name'])) {
+                if ($_FILES['certificate_key']['type'] !== 'application/octet-stream') {
+                    $json['message'] = $this->message->warning('Selecione um certificado digital .key')->render();
+                    echo json_encode($json);
+                    return;
+                }
+                $certificate_name_key = md5(microtime()) . ".key";
+                $path = __DIR__ . '/../../storage/certificados/';
+                if (!(new Upload())->sendCertificate($_FILES['certificate_key'], $certificate_name_key, $path)) {
+                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .key')->render();
+                    echo json_encode($json);
+                    return;
+                }
+                $company->certificate_key = $certificate_name_key;
+            }
+
+            if (!empty($company->certificate_crt) || !empty($company->certificate_key)) {
+                if (empty(trim($data['certificate_password']))) {
+                    $json['message'] = $this->message->warning('Digite a senha do certificado digital')->render();
+                    echo json_encode($json);
+                    return;
+                }
+            }*/
+
             $company->name = $data['name'];
             $company->document = $data['document'];
             $company->manager = $data['manager'];
             $company->type = $data['type'];
             $company->address = $data['address'];
+            $company->certificate_password = $data['certificate_password'];
             if ($company->save()) {
                 $this->message->success("Empresa atualizada com sucesso!")->flash();
                 echo json_encode(['refresh' => true]);
@@ -185,6 +257,7 @@ class Admin extends Controller
                 return;
             }
         }
+
 
         $head = $this->seo->render(
             "Editar empresa {$company->name} | " . CONF_SITE_NAME,

@@ -65,6 +65,51 @@
                                        placeholder="Digite aqui..."/>
                             </div>
                         </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label  class="w-100">Certificado .pfx
+                                    <?php if (!empty($company->certificate_pfx)): ?>
+                                        <a title="Download do certificado" href="<?= url("/storage/certificados/{$company->certificate_pfx}") ?>" download=""
+                                           class="btn btn-icon btn-xs btn-light float-right"><i class="fas fa-download"></i></a>
+                                    <?php endif; ?>
+                                </label>
+                                <div></div>
+                                <div class="custom-file">
+                                    <input name="certificate_pfx" type="file" class="custom-file-input"  id="customFile"/>
+                                    <label class="custom-file-label" for="customFile">Selecionar certificado</label>
+                                </div>
+
+                            </div>
+                        </div>
+                       <!-- <div class="col-md-3">
+                            <div class="form-group">
+                                <label class="w-100">Certificado .key
+                                    <?php /*if (!empty($company->certificate_key)): */?>
+                                        <a title="Download do certificado"
+                                           href="<?/*= url("/storage/certificados/{$company->certificate_key}") */?>"
+                                           download=""
+                                           class="btn btn-icon btn-xs btn-light float-right"><i
+                                                    class="fas fa-download"></i></a>
+                                    <?php /*endif; */?>
+                                </label>
+                                <div></div>
+                                <div class="custom-file">
+                                    <input name="certificate_key" type="file" class="custom-file-input"
+                                           id="customFile"/>
+                                    <label class="custom-file-label" for="customFile">Selecionar certificado</label>
+                                </div>
+
+                            </div>
+                        </div>-->
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label>Senha do certificado </label>
+                                <input name="certificate_password" value="<?= $company->certificate_password ?>"
+                                       type="text"
+                                       class="form-control"
+                                       placeholder="Digite aqui..."/>
+                            </div>
+                        </div>
                         <div class="col-12">
                             <button class="btn btn-theme" type="submit" title="Atualizar empresa">Salvar
                             </button>

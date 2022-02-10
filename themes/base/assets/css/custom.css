@@ -124,11 +124,11 @@
 }
 
 .paginator {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     margin-top: 30px;
- }
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 30px;
+}
 
 .paginator a, .paginator_active {
     color: var(--theme-btn-color-text);
@@ -142,9 +142,15 @@
 }
 
 .paginator_active,
-.paginator a:hover
-{
+.paginator a:hover {
     color: var(--theme-btn-color);
     background-color: var(--theme-btn-color-text);
     border: 1px solid var(--theme-btn-color);
+}
+
+
+.custom-file-label::after {
+    font-family: "Font Awesome 5 Free", serif;
+    font-weight: 900;
+    content: "\f002";
 }

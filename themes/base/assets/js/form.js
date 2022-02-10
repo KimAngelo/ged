@@ -138,11 +138,11 @@ function clearForm(myFormElement) {
 
     var elements = document.querySelector(myFormElement).elements;
 
-    for(i=0; i<elements.length; i++) {
+    for (i = 0; i < elements.length; i++) {
 
         field_type = elements[i].type.toLowerCase();
 
-        switch(field_type) {
+        switch (field_type) {
 
             case "text":
             case "password":
@@ -168,4 +168,45 @@ function clearForm(myFormElement) {
                 break;
         }
     }
+}
+
+function checkbox_sign() {
+    let documents = [];
+    let document_signed = document.querySelectorAll('input[name=document_signed]');
+    document_signed.forEach(document_list => {
+        document_list.addEventListener('change', () => {
+            if (document_list.checked) {
+                documents.push(document_list.value);
+                document.querySelector('.button-to-sign').classList.remove('d-none');
+                document.querySelector('.label-to-sign').classList.add('d-none');
+                return false;
+            }
+            let indice = documents.indexOf(document_list.value);
+            while (indice >= 0) {
+                documents.splice(indice, 1);
+                indice = documents.indexOf(document_list.value);
+            }
+            if (documents.length === 0) {
+                document.querySelector('.button-to-sign').classList.add('d-none');
+                document.querySelector('.label-to-sign').classList.remove('d-none');
+                return false;
+            }
+        });
+    });
+    let button_sign = document.querySelector('.button-to-sign');
+    button_sign.addEventListener('click', () => {
+        const url = button_sign.getAttribute('data-url');
+        $.post(url, {action: 'sign', documents: documents}, function (response, status) {
+            if (response.message_warning) {
+                toastr.warning(response.message_warning);
+                return false;
+            }
+            if (response.refresh) {
+                $('html').animate({scrollTop: 0}, 'slow');
+                setTimeout(function () {
+                    window.location.reload();
+                }, 500);
+            }
+        }, 'json');
+    });
 }

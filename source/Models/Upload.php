@@ -132,6 +132,14 @@ class Upload
         $image->save($this->optimizeFile);
     }
 
+    public function sendCertificate($file, $file_name, $path)
+    {
+        if (move_uploaded_file($file['tmp_name'], $path . $file_name)) {
+            return true;
+        }
+        return false;
+    }
+
     /**
      * @param string $file_name
      * @param $path
@@ -169,6 +177,11 @@ class Upload
             return false;
         }
         return (new GoogleStorage())->write($path, file_get_contents($file));
+    }
+
+    public function updateFile($file, $path)
+    {
+        return (new GoogleStorage())->update($path, file_get_contents($file));
     }
 
     /**

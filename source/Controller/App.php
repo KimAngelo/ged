@@ -12,6 +12,7 @@ use Source\Models\Modules\Convention;
 use Source\Models\Modules\Expense;
 use Source\Models\Modules\Legislation;
 use Source\Models\Modules\Report;
+use Source\Models\Modules\Sign;
 use Source\Models\User;
 use Source\Support\Pager;
 
@@ -68,8 +69,6 @@ class App extends Controller
      */
     public function monitoring(? array $data): void
     {
-
-
         $total_documents = $this->company->expense_total_documents + $this->company->bidding_total_documents +
             $this->company->contract_total_documents + $this->company->convention_total_documents + $this->company->legislation_total_documents + $this->company->report_total_documents;
 
@@ -201,6 +200,38 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_crt)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Expense())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_EXPENSE),
+                    $this->company,
+                    CONF_UPLOAD_EXPENSE,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -291,7 +322,8 @@ class App extends Controller
         echo $this->view->render("expenses", [
             "head" => $head,
             "expenses" => $expanses,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pfx) && !empty($this->company->certificate_crt) ? true : false
         ]);
     }
 
