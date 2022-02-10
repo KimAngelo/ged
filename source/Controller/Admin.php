@@ -188,10 +188,9 @@ class Admin extends Controller
                 $certificate_name_pfx = md5(microtime()) . ".pfx";
                 $certificate_name_crt = md5(microtime()) . ".crt";
                 $save_crt = $path . $certificate_name_crt;
-
                 //Gera o arquivo .crt
                 $pfx_real = realpath($_FILES['certificate_pfx']['tmp_name']);
-                shell_exec("openssl pkcs12 -in {$pfx_real} -out $save_crt -nodes -passin pass:{$data['certificate_password']}");
+                shell_exec("openssl pkcs12 -in {$pfx_real} -out " . realpath($path) . "/{$certificate_name_crt} -nodes -passin pass:{$data['certificate_password']}");
 
                 if (!file_exists($save_crt)) {
                     $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
