@@ -159,6 +159,8 @@ class Admin extends Controller
             $this->router->redirect('admin.companies');
         }
         if (isset($data['action']) && $data['action'] == "update") {
+            echo shell_exec ("ls");
+            exit();
             $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
             if (empty(trim($data['name']))) {
                 $json['message'] = $this->message->warning('Preencha o nome da empresa')->render();
