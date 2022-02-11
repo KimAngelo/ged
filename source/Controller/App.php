@@ -205,7 +205,7 @@ class App extends Controller
                 echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
                 return;
             }
-            if (empty($this->company->certificate_crt)) {
+            if (empty($this->company->certificate_pem)) {
                 echo json_encode(['message_warning' => "Você não possui certificado digital"]);
                 return;
             }
