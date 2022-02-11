@@ -195,8 +195,10 @@ function checkbox_sign() {
     });
     let button_sign = document.querySelector('.button-to-sign');
     button_sign.addEventListener('click', () => {
+        load('open');
         const url = button_sign.getAttribute('data-url');
         $.post(url, {action: 'sign', documents: documents}, function (response, status) {
+            load('close');
             if (response.message_warning) {
                 toastr.warning(response.message_warning);
                 return false;

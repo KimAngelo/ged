@@ -35,7 +35,8 @@
     "ext-simplexml": "*",
     "superbalist/flysystem-google-storage": "^7.2",
     "setasign/fpdi": "^2.3",
-    "tecnickcom/tcpdf": "^6.4"
+    "tecnickcom/tcpdf": "^6.4",
+    "ext-openssl": "*"
   },
   "require-dev": {
     "fzaninotto/faker": "^1.9"

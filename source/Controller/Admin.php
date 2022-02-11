@@ -170,9 +170,9 @@ class Admin extends Controller
                 echo json_encode($json);
                 return;
             }
-            if (!empty($_FILES['certificate_pfx']['tmp_name'])) {
-                if ($_FILES['certificate_pfx']['type'] !== 'application/x-pkcs12') {
-                    $json['message'] = $this->message->warning('Selecione um certificado digital .pfx')->render();
+            if (!empty($_FILES['certificate_pem']['tmp_name'])) {
+                if ($_FILES['certificate_pem']['type'] !== 'application/octet-stream') {
+                    $json['message'] = $this->message->warning('Selecione um certificado digital .pem')->render();
                     echo json_encode($json);
                     return;
                 }
@@ -182,36 +182,21 @@ class Admin extends Controller
                     echo json_encode($json);
                     return;
                 }
+
                 $path = __DIR__ . '/../../storage/certificados/';
-                $certificate_name_pfx = md5(microtime()) . ".pfx";
-                $certificate_name_crt = md5(microtime()) . ".crt";
-                $save_crt = $path . $certificate_name_crt;
+                $certificate_name_pem = md5(microtime()) . ".pem";
 
                 //Gera o arquivo .crt
-
-                if (!(new Upload())->sendCertificate($_FILES['certificate_pfx'], $certificate_name_pfx, $path)) {
-                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .pfx')->render();
+                if (!(new Upload())->sendCertificate($_FILES['certificate_pem'], $certificate_name_pem, $path)) {
+                    $json['message'] = $this->message->warning('Erro ao fazer upload do certificado digital .pem')->render();
                     echo json_encode($json);
                     return;
                 }
-                $pfx_shell = realpath($path) . "/{$certificate_name_pfx}";
-                $crt_shell = realpath($path) . "/{$certificate_name_crt}";
-                shell_exec("openssl pkcs12 -in {$pfx_shell} -out {$crt_shell} -nodes -passin pass:{$data['certificate_password']}");
-                sleep(2);
-                if (!file_exists($save_crt)) {
-                    $json['message'] = $this->message->warning('Erro ao gerar arquivo .crt, possível erro na senha')->render();
-                    echo json_encode($json);
-                    return;
-                }
-
                 //Verifica se já exisita um certificado digital, aí apaga o anterior
-                if (!empty($company->certificate_pfx) && $company->certificate_crt) {
-                    unlink($path . $company->certificate_pfx);
-                    unlink($path . $company->certificate_crt);
+                if (!empty($company->certificate_pem)) {
+                    unlink($path . $company->certificate_pem);
                 }
-
-                $company->certificate_pfx = $certificate_name_pfx;
-                $company->certificate_crt = $certificate_name_crt;
+                $company->certificate_pem = $certificate_name_pem;
             }
 
             /*if (!empty($_FILES['certificate_key']['tmp_name'])) {

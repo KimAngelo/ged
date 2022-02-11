@@ -19,10 +19,10 @@ class Sign
     public function index($path_original, Company $company, $folder, $document_name, $new_file_name)
     {
 
-        $cert = realpath(__DIR__ . '/../../../storage/certificados/' . $company->certificate_crt);
+        $cert = realpath(__DIR__ . '/../../../storage/certificados/' . $company->certificate_pem);
 
         if (!file_exists($cert)) {
-            echo json_encode(['message_warning' => "Não encontramos o seu certificado digital .crt"]);
+            echo json_encode(['message_warning' => "Não encontramos o seu certificado digital .pem"]);
             exit();
         }
 

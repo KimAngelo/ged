@@ -67,30 +67,38 @@
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
-                                <label  class="w-100">Certificado .pfx
-                                    <?php if (!empty($company->certificate_pfx)): ?>
-                                        <a title="Download do certificado" href="<?= url("/storage/certificados/{$company->certificate_pfx}") ?>" download=""
-                                           class="btn btn-icon btn-xs btn-light float-right"><i class="fas fa-download"></i></a>
+                                <label class="w-100">Certificado .pem
+                                    <?php if (!empty($company->certificate_pem)): ?>
+                                        <a title="Download do certificado"
+                                           href="<?= url("/storage/certificados/{$company->certificate_pem}") ?>"
+                                           download=""
+                                           class="btn btn-icon btn-xs btn-light float-right ml-2"><i
+                                                    class="fas fa-download"></i></a>
                                     <?php endif; ?>
+                                    <a title="Gerar certificado .pem à partir do .pfx"
+                                       href="https://www.leaderssl.com/tools/ssl_converter" target="_blank"
+                                       class="btn btn-icon btn-xs btn-light float-right"><i
+                                                class="fas fa-exclamation"></i></a>
                                 </label>
                                 <div></div>
                                 <div class="custom-file">
-                                    <input name="certificate_pfx" type="file" class="custom-file-input"  id="customFile"/>
+                                    <input name="certificate_pem" type="file" class="custom-file-input"
+                                           id="customFile"/>
                                     <label class="custom-file-label" for="customFile">Selecionar certificado</label>
                                 </div>
 
                             </div>
                         </div>
-                       <!-- <div class="col-md-3">
+                        <!-- <div class="col-md-3">
                             <div class="form-group">
                                 <label class="w-100">Certificado .key
-                                    <?php /*if (!empty($company->certificate_key)): */?>
+                                    <?php /*if (!empty($company->certificate_key)): */ ?>
                                         <a title="Download do certificado"
-                                           href="<?/*= url("/storage/certificados/{$company->certificate_key}") */?>"
+                                           href="<? /*= url("/storage/certificados/{$company->certificate_key}") */ ?>"
                                            download=""
                                            class="btn btn-icon btn-xs btn-light float-right"><i
                                                     class="fas fa-download"></i></a>
-                                    <?php /*endif; */?>
+                                    <?php /*endif; */ ?>
                                 </label>
                                 <div></div>
                                 <div class="custom-file">
@@ -101,7 +109,7 @@
 
                             </div>
                         </div>-->
-                        <div class="col-md-6">
+                        <div class="col-md-3">
                             <div class="form-group">
                                 <label>Senha do certificado </label>
                                 <input name="certificate_password" value="<?= $company->certificate_password ?>"
