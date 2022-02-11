@@ -323,7 +323,7 @@ class App extends Controller
             "head" => $head,
             "expenses" => $expanses,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pfx) && !empty($this->company->certificate_crt) ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) ? true : false
         ]);
     }
 
