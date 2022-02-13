@@ -14,7 +14,8 @@
                         <div class="col-md-2">
                             <div class="form-group">
                                 <label>Número</label>
-                                <input value="<?= $_GET['number'] ?? "" ?>" name="number" type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= $_GET['number'] ?? "" ?>" name="number" type="text"
+                                       class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
@@ -22,22 +23,30 @@
                                 <label>Tipo</label>
                                 <select name="type" class="form-control">
                                     <option value=""></option>
-                                    <option <?= isset($_GET['type']) && $_GET['type'] == "1" ? "selected" : "" ?> value="1">Convênio</option>
-                                    <option <?= isset($_GET['type']) && $_GET['type'] == "2" ? "selected" : "" ?> value="2">Movimentação do Convênio</option>
-                                    <option <?= isset($_GET['type']) && $_GET['type'] == "3" ? "selected" : "" ?> value="3">Prestação de Contas</option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "1" ? "selected" : "" ?>
+                                            value="1">Convênio
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "2" ? "selected" : "" ?>
+                                            value="2">Movimentação do Convênio
+                                    </option>
+                                    <option <?= isset($_GET['type']) && $_GET['type'] == "3" ? "selected" : "" ?>
+                                            value="3">Prestação de Contas
+                                    </option>
                                 </select>
                             </div>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
                                 <label>Objeto</label>
-                                <input value="<?= $_GET['object'] ?? "" ?>" name="object" type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= $_GET['object'] ?? "" ?>" name="object" type="text"
+                                       class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Concedente</label>
-                                <input value="<?= $_GET['grantor'] ?? "" ?>" name="grantor" type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= $_GET['grantor'] ?? "" ?>" name="grantor" type="text"
+                                       class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
 
@@ -59,6 +68,16 @@
                                 <th>Número</th>
                                 <th>Tipo</th>
                                 <th>Objeto</th>
+                                <?php if ($release_subscription): ?>
+                                    <th class="d-flex border-bottom-0 justify-content-center align-items-center">
+                                        <span class="label-to-sign">Assinar</span>
+                                        <button title="Assinar documentos"
+                                                data-url="<?= $router->route('app.convention') ?>"
+                                                class="btn btn-xs btn-theme d-none button-to-sign"><i
+                                                    class="fas fa-signature text-white"></i> Assinar
+                                        </button>
+                                    </th>
+                                <?php endif; ?>
                                 <th>Ação</th>
                             </tr>
                             </thead>
@@ -68,11 +87,28 @@
                                     <th><?= $convention->number ?></th>
                                     <th><?= type_convention($convention->type) ?></th>
                                     <th><?= str_limit_chars($convention->object, 50) ?></th>
+                                    <?php if ($release_subscription): ?>
+                                        <th class="">
+                                            <?php if ($convention->signed !== 'true'): ?>
+                                                <div class="form-group">
+                                                    <div class="checkbox-list">
+                                                        <label class="checkbox d-flex justify-content-center">
+                                                            <input type="checkbox" value="<?= $convention->id ?>"
+                                                                   name="document_signed"/>
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        </th>
+                                    <?php endif; ?>
                                     <th>
                                         <div class="btn-group" role="group"
                                              aria-label="Button group with nested dropdown">
                                             <a target="_blank"
-                                               href="<?= storage($convention->document_name, company()->id . "/" . CONF_UPLOAD_CONVENTION) ?>"
+                                               href="#"
+                                               data-toggle="modal"
+                                               data-target="#view_<?= $convention->id ?>"
                                                class="btn btn-primary font-weight-bold btn-sm"><i
                                                         class="fas fa-download"></i></a>
 
@@ -85,7 +121,9 @@
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                                     <a class="dropdown-item" target="_blank"
-                                                       href="<?= storage($convention->document_name, company()->id . "/" . CONF_UPLOAD_CONVENTION) ?>">Visualizar
+                                                       data-toggle="modal"
+                                                       data-target="#view_<?= $convention->id ?>"
+                                                       href="#">Visualizar
                                                         PDF</a>
                                                     <a data-toggle="modal"
                                                        data-target="#information_<?= $convention->id ?>"
@@ -165,9 +203,23 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="view_<?= $convention->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-1">
+                    <iframe class="embed-responsive-item w-100" style="height: 100vh;"
+                            src="<?= storage($convention->document_name, company()->id . "/" . CONF_UPLOAD_CONVENTION) ?>"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
-
+    checkbox_sign();
 </script>
 <?php $v->end() ?>

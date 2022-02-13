@@ -18,7 +18,6 @@ class Sign
 {
     public function index($path_original, Company $company, $folder, $document_name, $new_file_name)
     {
-
         $cert = realpath(__DIR__ . '/../../../storage/certificados/' . $company->certificate_pem);
 
         if (!file_exists($cert)) {
@@ -28,14 +27,17 @@ class Sign
 
         //Faz download do pdf no storage e salva em pasta temporária
         $temporary = __DIR__ . '/../../../storage/tmp/file_tmp.pdf';
-        file_put_contents($temporary, file_get_contents($path_original));
+        if (file_put_contents($temporary, file_get_contents($path_original)) === 0) {
+            echo json_encode(['message_warning' => "Erro ao buscar documento no storage"]);
+            exit();
+        }
 
         $fpdi = new Fpdi(); //Abre biblioteca de assinatura
         $fpdi->setSignature('file://' . $cert, 'file://' . $cert, $company->certificate_password, '', 2, []);
         try {
             $count_pages = $fpdi->setSourceFile($temporary);//Quantidade de páginas para o loop
         } catch (PdfParserException $e) {
-            return false;
+            var_dump($e->getMessage());
         }
 
         for ($i = 0; $i < $count_pages; $i++) {

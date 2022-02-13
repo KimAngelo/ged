@@ -79,7 +79,8 @@
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Objeto</label>
-                                <input value="<?= $_GET['object'] ?? "" ?>" name="object" type="text" class="form-control" placeholder="Digite aqui"/>
+                                <input value="<?= $_GET['object'] ?? "" ?>" name="object" type="text"
+                                       class="form-control" placeholder="Digite aqui"/>
                             </div>
                         </div>
 
@@ -100,6 +101,16 @@
                                 <th>Modalidade</th>
                                 <th>N° Modalidade</th>
                                 <th>Data</th>
+                                <?php if ($release_subscription): ?>
+                                    <th class="d-flex border-bottom-0 justify-content-center align-items-center">
+                                        <span class="label-to-sign">Assinar</span>
+                                        <button title="Assinar documentos"
+                                                data-url="<?= $router->route('app.bidding') ?>"
+                                                class="btn btn-xs btn-theme d-none button-to-sign"><i
+                                                    class="fas fa-signature text-white"></i> Assinar
+                                        </button>
+                                    </th>
+                                <?php endif; ?>
                                 <th>Ação</th>
                             </tr>
                             </thead>
@@ -110,11 +121,28 @@
                                     <th><?= modality_bidding($bidding->modality) ?></th>
                                     <th><?= $bidding->number_modality ?></th>
                                     <th><?= date_fmt($bidding->date, 'd/m/Y') ?></th>
+                                    <?php if ($release_subscription): ?>
+                                        <th class="">
+                                            <?php if ($bidding->signed !== 'true'): ?>
+                                                <div class="form-group">
+                                                    <div class="checkbox-list">
+                                                        <label class="checkbox d-flex justify-content-center">
+                                                            <input type="checkbox" value="<?= $bidding->id ?>"
+                                                                   name="document_signed"/>
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        </th>
+                                    <?php endif; ?>
                                     <th>
                                         <div class="btn-group" role="group"
                                              aria-label="Button group with nested dropdown">
-                                            <a href="<?= storage($bidding->document_name, company()->id . "/" . CONF_UPLOAD_BIDDING) ?>"
-                                               title="Baixar documento" download target="_blank"
+                                            <a href="#"
+                                               data-toggle="modal"
+                                               data-target="#view_<?= $bidding->id ?>"
+                                               title="Baixar documento"
                                                class="btn btn-primary font-weight-bold btn-sm"><i
                                                         class="fas fa-download"></i></a>
 
@@ -127,7 +155,9 @@
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                                     <a target="_blank" class="dropdown-item"
-                                                       href="<?= storage($bidding->document_name, company()->id . "/" . CONF_UPLOAD_BIDDING) ?>">Visualizar
+                                                       data-toggle="modal"
+                                                       data-target="#view_<?= $bidding->id ?>"
+                                                       href="#">Visualizar
                                                         PDF</a>
                                                     <a data-toggle="modal"
                                                        data-target="#information_<?= $bidding->id ?>"
@@ -204,6 +234,20 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="view_<?= $bidding->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-1">
+                    <iframe class="embed-responsive-item w-100" style="height: 100vh;"
+                            src="<?= storage($bidding->document_name, company()->id . "/" . CONF_UPLOAD_BIDDING) ?>"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
@@ -211,5 +255,6 @@
     jQuery(document).ready(function () {
         KTBootstrapDatepicker.init();
     });
+    checkbox_sign();
 </script>
 <?php $v->end() ?>

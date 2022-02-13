@@ -149,8 +149,8 @@
                                                     <i class="fas fa-plus"></i>
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                                                    <a target="_blank" class="dropdown-item"
-                                                       href="<?= storage($expense->document_name, company()->id . "/" . CONF_UPLOAD_EXPENSE) ?>">Visualizar
+                                                    <a href="#" class="dropdown-item" data-toggle="modal"
+                                                       data-target="#view_<?= $expense->id ?>">Visualizar
                                                         PDF</a>
                                                     <a data-toggle="modal"
                                                        data-target="#information_<?= $expense->id ?>"

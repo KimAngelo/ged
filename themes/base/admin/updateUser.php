@@ -66,6 +66,19 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-6 col-form-label">Assinar documento</label>
+                                <div class="col-3 p-0">
+                                   <span class="switch">
+                                    <label>
+                                     <input type="checkbox" <?= $user->sign == 1 ? "checked" : "" ?> name="sign"/>
+                                     <span></span>
+                                    </label>
+                                   </span>
+                                </div>
+                            </div>
+                        </div>
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label>Módulos de acesso *</label>
@@ -77,27 +90,32 @@
                                         Despesa
                                     </label>
                                     <label class="checkbox">
-                                        <input <?= in_array('2', $roles) ? "checked" : "" ?> type="checkbox" value="2" name="roles[]"/>
+                                        <input <?= in_array('2', $roles) ? "checked" : "" ?> type="checkbox" value="2"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Licitação
                                     </label>
                                     <label class="checkbox">
-                                        <input <?= in_array('3', $roles) ? "checked" : "" ?> type="checkbox" value="3" name="roles[]"/>
+                                        <input <?= in_array('3', $roles) ? "checked" : "" ?> type="checkbox" value="3"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Contrato
                                     </label>
                                     <label class="checkbox">
-                                        <input <?= in_array('4', $roles) ? "checked" : "" ?> type="checkbox" value="4" name="roles[]"/>
+                                        <input <?= in_array('4', $roles) ? "checked" : "" ?> type="checkbox" value="4"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Legislação
                                     </label>
                                     <label class="checkbox">
-                                        <input <?= in_array('5', $roles) ? "checked" : "" ?> type="checkbox" value="5" name="roles[]"/>
+                                        <input <?= in_array('5', $roles) ? "checked" : "" ?> type="checkbox" value="5"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Relatórios
                                     </label>
                                     <label class="checkbox">
-                                        <input <?= in_array('6', $roles) ? "checked" : "" ?> type="checkbox" value="6" name="roles[]"/>
+                                        <input <?= in_array('6', $roles) ? "checked" : "" ?> type="checkbox" value="6"
+                                                                                             name="roles[]"/>
                                         <span></span>
                                         Convênio
                                     </label>
@@ -111,7 +129,8 @@
                                 <div class="checkbox-list">
                                     <?php foreach ($companies as $company): ?>
                                         <label class="checkbox">
-                                            <input <?= in_array($company->id, $companies_user) ? "checked" : "" ?> type="checkbox" value="<?= $company->id ?>" name="companies[]"/>
+                                            <input <?= in_array($company->id, $companies_user) ? "checked" : "" ?>
+                                                    type="checkbox" value="<?= $company->id ?>" name="companies[]"/>
                                             <span></span>
                                             <?= $company->name ?>
                                         </label>
@@ -145,13 +164,15 @@
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Nova senha *</label>
-                                <input name="password" type="password" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="password" type="password" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-3">
                             <div class="form-group">
                                 <label>Confirme a senha *</label>
-                                <input name="password_re" type="password" class="form-control" placeholder="Digite aqui..."/>
+                                <input name="password_re" type="password" class="form-control"
+                                       placeholder="Digite aqui..."/>
                             </div>
                         </div>
                         <div class="col-md-12">

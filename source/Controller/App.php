@@ -201,6 +201,10 @@ class App extends Controller
         }
 
         if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
             if (!isset($data['documents']) || in_array('', $data['documents'])) {
                 echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
                 return;
@@ -323,7 +327,7 @@ class App extends Controller
             "head" => $head,
             "expenses" => $expanses,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 
@@ -336,6 +340,42 @@ class App extends Controller
         if (!$bidding->permission(explode(';', $this->user->roles))) {
             $this->message->error("Você não tem permissão para acessar esse módulo")->flash();
             $this->router->redirect("app.search");
+        }
+
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_pem)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Contract())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_CONTRACT),
+                    $this->company,
+                    CONF_UPLOAD_CONTRACT,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
         }
 
         if (isset($data['action']) && $data['action'] == "send_document_email") {
@@ -442,7 +482,8 @@ class App extends Controller
         echo $this->view->render("bidding", [
             "head" => $head,
             "biddings" => $biddings,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 
@@ -455,6 +496,42 @@ class App extends Controller
         if (!$contract->permission(explode(';', $this->user->roles))) {
             $this->message->error("Você não tem permissão para acessar esse módulo")->flash();
             $this->router->redirect("app.search");
+        }
+
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_pem)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Bidding())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_BIDDING),
+                    $this->company,
+                    CONF_UPLOAD_BIDDING,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
         }
 
         if (isset($data['action']) && $data['action'] == "send_document_email") {
@@ -546,7 +623,8 @@ class App extends Controller
         echo $this->view->render("contract", [
             "head" => $head,
             "contracts" => $contracts,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 
@@ -559,6 +637,42 @@ class App extends Controller
         if (!$legislation->permission(explode(';', $this->user->roles))) {
             $this->message->error("Você não tem permissão para acessar esse módulo")->flash();
             $this->router->redirect("app.search");
+        }
+
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_pem)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Legislation())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_LEGISLATION),
+                    $this->company,
+                    CONF_UPLOAD_LEGISLATION,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
         }
 
         if (isset($data['action']) && $data['action'] == "send_document_email") {
@@ -665,7 +779,8 @@ class App extends Controller
         echo $this->view->render("legislation", [
             "head" => $head,
             "legislations" => $legislations,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 
@@ -678,6 +793,45 @@ class App extends Controller
         if (!$report->permission(explode(';', $this->user->roles))) {
             $this->message->error("Você não tem permissão para acessar esse módulo")->flash();
             $this->router->redirect("app.search");
+        }
+
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_pem)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Report())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_REPORT),
+                    $this->company,
+                    CONF_UPLOAD_REPORT,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                var_dump($sign);
+                exit();
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
         }
 
         if (isset($data['action']) && $data['action'] == "send_document_email") {
@@ -770,7 +924,8 @@ class App extends Controller
         echo $this->view->render("report", [
             "head" => $head,
             "reports" => $reports,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 
@@ -783,6 +938,42 @@ class App extends Controller
         if (!$convention->permission(explode(';', $this->user->roles))) {
             $this->message->error("Você não tem permissão para acessar esse módulo")->flash();
             $this->router->redirect("app.search");
+        }
+
+        if (isset($data['action']) && $data['action'] == "sign") {
+            if ($this->user->sign != 1) {
+                echo json_encode(['message_warning' => "Você não tem permissão para assinar documentos"]);
+                return;
+            }
+            if (!isset($data['documents']) || in_array('', $data['documents'])) {
+                echo json_encode(['message_warning' => "Selecione algum documento para assinar"]);
+                return;
+            }
+            if (empty($this->company->certificate_pem)) {
+                echo json_encode(['message_warning' => "Você não possui certificado digital"]);
+                return;
+            }
+
+            foreach ($data['documents'] as $document) {
+                $file = (new Convention())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                if (!$file) {
+                    echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
+                    return;
+                }
+                $sign = (new Sign())->index(
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_CONVENTION),
+                    $this->company,
+                    CONF_UPLOAD_CONVENTION,
+                    $file->document_name,
+                    $new_file_name = 'signed_' . $file->document_name
+                );
+                $file->document_name = $new_file_name;
+                $file->signed = 'true';
+                $file->save();
+            }
+            $this->message->success("Documentos assinados com sucesso!")->flash();
+            echo json_encode(['refresh' => true]);
+            return;
         }
 
         if (isset($data['action']) && $data['action'] == "send_document_email") {
@@ -880,7 +1071,8 @@ class App extends Controller
         echo $this->view->render("convention", [
             "head" => $head,
             "conventions" => $conventions,
-            "render" => $pager->render()
+            "render" => $pager->render(),
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
         ]);
     }
 

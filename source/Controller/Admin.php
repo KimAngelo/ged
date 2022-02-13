@@ -457,6 +457,7 @@ class Admin extends Controller
 
         if (isset($data['action']) && $data['action'] == "update") {
             $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+
             if (empty(trim($data['first_name'])) || empty(trim($data['last_name']))) {
                 $json['message'] = $this->message->warning("Preencha o campo nome e sobrenome do usuário")->render();
                 echo json_encode($json);
@@ -481,6 +482,11 @@ class Admin extends Controller
                 $json['message'] = $this->message->warning("Opção selecionada inválido [Admin]")->render();
                 echo json_encode($json);
                 return;
+            }
+            if (isset($data['sign'])) {
+                $user->sign = 1;
+            } else {
+                $user->sign = 0;
             }
             $roles = (new Roles())->arrayRoles();
             if (!isset($data['roles'])) {

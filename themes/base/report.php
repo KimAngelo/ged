@@ -70,6 +70,16 @@
                                 <th>Nome</th>
                                 <th>Ano</th>
                                 <th>Tipo</th>
+                                <?php if ($release_subscription): ?>
+                                    <th class="d-flex border-bottom-0 justify-content-center align-items-center">
+                                        <span class="label-to-sign">Assinar</span>
+                                        <button title="Assinar documentos"
+                                                data-url="<?= $router->route('app.report') ?>"
+                                                class="btn btn-xs btn-theme d-none button-to-sign"><i
+                                                    class="fas fa-signature text-white"></i> Assinar
+                                        </button>
+                                    </th>
+                                <?php endif; ?>
                                 <th>Ação</th>
                             </tr>
                             </thead>
@@ -79,10 +89,26 @@
                                     <th><?= $report->name ?></th>
                                     <th><?= $report->year ?></th>
                                     <th><?= type_report($report->type) ?></th>
+                                    <?php if ($release_subscription): ?>
+                                        <th class="">
+                                            <?php if ($report->signed !== 'true'): ?>
+                                                <div class="form-group">
+                                                    <div class="checkbox-list">
+                                                        <label class="checkbox d-flex justify-content-center">
+                                                            <input type="checkbox" value="<?= $report->id ?>"
+                                                                   name="document_signed"/>
+                                                            <span></span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            <?php endif; ?>
+                                        </th>
+                                    <?php endif; ?>
                                     <th>
                                         <div class="btn-group" role="group"
                                              aria-label="Button group with nested dropdown">
-                                            <a href="<?= storage($report->document_name, company()->id . "/" . CONF_UPLOAD_REPORT) ?>"
+                                            <a href="#" data-toggle="modal"
+                                               data-target="#view_<?= $report->id ?>"
                                                target="_blank" class="btn btn-primary font-weight-bold btn-sm"><i
                                                         class="fas fa-download"></i>
                                             </a>
@@ -96,7 +122,8 @@
                                                 </button>
                                                 <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
                                                     <a target="_blank" class="dropdown-item"
-                                                       href="<?= storage($report->document_name, company()->id . "/" . CONF_UPLOAD_REPORT) ?>">Visualizar
+                                                       href="#" data-toggle="modal"
+                                                       data-target="#view_<?= $report->id ?>">Visualizar
                                                         PDF</a>
                                                     <a data-toggle="modal" data-target="#send_email_<?= $report->id ?>"
                                                        class="dropdown-item"
@@ -146,6 +173,20 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="view_<?= $report->id ?>" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body p-1">
+                    <iframe class="embed-responsive-item w-100" style="height: 100vh;"
+                            src="<?= storage($report->document_name, company()->id . "/" . CONF_UPLOAD_REPORT) ?>"
+                            allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
 <?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
@@ -153,5 +194,6 @@
     jQuery(document).ready(function () {
         KTBootstrapDatepicker.init();
     });
+    checkbox_sign();
 </script>
 <?php $v->end() ?>
