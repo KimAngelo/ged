@@ -18,6 +18,7 @@ class Sign
 {
     public function index($path_original, Company $company, $folder, $document_name, $new_file_name)
     {
+        set_time_limit(0);
         $cert = realpath(__DIR__ . '/../../../storage/certificados/' . $company->certificate_pem);
 
         if (!file_exists($cert)) {
