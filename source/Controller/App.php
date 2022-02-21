@@ -513,15 +513,15 @@ class App extends Controller
             }
 
             foreach ($data['documents'] as $document) {
-                $file = (new Bidding())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
+                $file = (new Contract())->find("id = :id AND id_company = :id_company", "id={$document}&id_company={$this->company->id}")->fetch();
                 if (!$file) {
                     echo json_encode(['message_warning' => "Esse documento não pertence a sua empresa"]);
                     return;
                 }
                 $sign = (new Sign())->index(
-                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_BIDDING),
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_CONTRACT),
                     $this->company,
-                    CONF_UPLOAD_BIDDING,
+                    CONF_UPLOAD_CONTRACT,
                     $file->document_name,
                     $new_file_name = 'signed_' . $file->document_name
                 );
