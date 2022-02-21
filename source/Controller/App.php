@@ -363,9 +363,9 @@ class App extends Controller
                     return;
                 }
                 $sign = (new Sign())->index(
-                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_CONTRACT),
+                    storage($file->document_name, $this->company->id . "/" . CONF_UPLOAD_BIDDING),
                     $this->company,
-                    CONF_UPLOAD_CONTRACT,
+                    CONF_UPLOAD_BIDDING,
                     $file->document_name,
                     $new_file_name = 'signed_' . $file->document_name
                 );
