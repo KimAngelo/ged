@@ -68,11 +68,25 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group row">
-                                <label class="col-6 col-form-label">Assinar documento</label>
+                                <label class="col-6 col-form-label">Assinar documentos</label>
                                 <div class="col-3 p-0">
                                    <span class="switch">
                                     <label>
                                      <input type="checkbox" <?= $user->sign == 1 ? "checked" : "" ?> name="sign"/>
+                                     <span></span>
+                                    </label>
+                                   </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8"></div>
+                        <div class="col-md-4">
+                            <div class="form-group row">
+                                <label class="col-6 col-form-label">Apagar documentos</label>
+                                <div class="col-3 p-0">
+                                   <span class="switch">
+                                    <label>
+                                     <input type="checkbox" <?= $user->delete_document == 1 ? "checked" : "" ?> name="delete_document"/>
                                      <span></span>
                                     </label>
                                    </span>

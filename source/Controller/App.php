@@ -13,6 +13,7 @@ use Source\Models\Modules\Expense;
 use Source\Models\Modules\Legislation;
 use Source\Models\Modules\Report;
 use Source\Models\Modules\Sign;
+use Source\Models\Upload;
 use Source\Models\User;
 use Source\Support\Pager;
 
@@ -67,7 +68,7 @@ class App extends Controller
     /**
      * @param array|null $data
      */
-    public function monitoring(? array $data): void
+    public function monitoring(?array $data): void
     {
         $total_documents = $this->company->expense_total_documents + $this->company->bidding_total_documents +
             $this->company->contract_total_documents + $this->company->convention_total_documents + $this->company->legislation_total_documents + $this->company->report_total_documents;
@@ -157,7 +158,7 @@ class App extends Controller
     /**
      * @param array|null $data
      */
-    public function expenses(? array $data): void
+    public function expenses(?array $data): void
     {
         $expense = new Expense();
         if (!$expense->permission(explode(';', $this->user->roles))) {
@@ -233,6 +234,32 @@ class App extends Controller
             }
             $this->message->success("Documentos assinados com sucesso!")->flash();
             echo json_encode(['refresh' => true]);
+            return;
+        }
+
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$expense = $expense->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->expense_total_documents -= 1;
+            $this->company->expense_total_pages -= $expense->total_page;
+            $this->company->save();
+
+            if ($expense->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_EXPENSE . $expense->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
             return;
         }
 
@@ -327,14 +354,15 @@ class App extends Controller
             "head" => $head,
             "expenses" => $expanses,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 
     /**
      * @param array|null $data
      */
-    public function bidding(? array $data): void
+    public function bidding(?array $data): void
     {
         $bidding = new Bidding();
         if (!$bidding->permission(explode(';', $this->user->roles))) {
@@ -413,6 +441,32 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$bidding = $bidding->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->bidding_total_documents -= 1;
+            $this->company->bidding_total_pages -= $bidding->total_page;
+            $this->company->save();
+
+            if ($bidding->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_BIDDING . $bidding->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -483,14 +537,15 @@ class App extends Controller
             "head" => $head,
             "biddings" => $biddings,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 
     /**
      * @param array|null $data
      */
-    public function contract(? array $data): void
+    public function contract(?array $data): void
     {
         $contract = new Contract();
         if (!$contract->permission(explode(';', $this->user->roles))) {
@@ -569,6 +624,32 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$contract = $contract->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->contract_total_documents -= 1;
+            $this->company->contract_total_pages -= $contract->total_page;
+            $this->company->save();
+
+            if ($contract->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_CONTRACT . $contract->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -624,14 +705,15 @@ class App extends Controller
             "head" => $head,
             "contracts" => $contracts,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 
     /**
      * @param array|null $data
      */
-    public function legislation(? array $data): void
+    public function legislation(?array $data): void
     {
         $legislation = new Legislation();
         if (!$legislation->permission(explode(';', $this->user->roles))) {
@@ -710,6 +792,32 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$legislation = $legislation->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->legislation_total_documents -= 1;
+            $this->company->legislation_total_pages -= $legislation->total_page;
+            $this->company->save();
+
+            if ($legislation->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_LEGISLATION . $legislation->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -780,14 +888,15 @@ class App extends Controller
             "head" => $head,
             "legislations" => $legislations,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 
     /**
      * @param array|null $data
      */
-    public function report(? array $data): void
+    public function report(?array $data): void
     {
         $report = new Report();
         if (!$report->permission(explode(';', $this->user->roles))) {
@@ -869,6 +978,32 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$report = $report->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->report_total_documents -= 1;
+            $this->company->report_total_pages -= $report->total_page;
+            $this->company->save();
+
+            if ($report->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_REPORT . $report->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -925,14 +1060,15 @@ class App extends Controller
             "head" => $head,
             "reports" => $reports,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 
     /**
      * @param array|null $data
      */
-    public function convention(? array $data): void
+    public function convention(?array $data): void
     {
         $convention = new Convention();
         if (!$convention->permission(explode(';', $this->user->roles))) {
@@ -1011,6 +1147,32 @@ class App extends Controller
             return;
         }
 
+        if (isset($data['action']) && $data['action'] == "delete") {
+
+            $data = filter_var_array($data, FILTER_SANITIZE_STRIPPED);
+            if (!$convention = $convention->findById($data['document'])) {
+                $json['message_error'] = "Não encontramos o documento que deseja excluir";
+                echo json_encode($json);
+                return;
+            }
+
+            $this->company->convention_total_documents -= 1;
+            $this->company->convention_total_pages -= $convention->total_page;
+            $this->company->save();
+
+            if ($convention->destroy()) {
+                //Apaga o documento
+                (new Upload())->removeStorage($this->company->id . "/" . CONF_UPLOAD_CONVENTION . $convention->document_name);
+
+                $this->message->success("Documento apagado com sucesso!")->flash();
+                echo json_encode(['refresh' => true]);
+                return;
+            }
+            $json['message_error'] = "Erro ao apagar documento";
+            echo json_encode($json);
+            return;
+        }
+
         $page = isset($_GET['page']) ? filter_input(INPUT_GET, "page", FILTER_VALIDATE_INT) : 1;
         $where = "";
         $params = "";
@@ -1072,7 +1234,8 @@ class App extends Controller
             "head" => $head,
             "conventions" => $conventions,
             "render" => $pager->render(),
-            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false
+            "release_subscription" => !empty($this->company->certificate_pem) && $this->user->sign == 1 ? true : false,
+            "delete_document" => (integer)$this->user->delete_document === 1
         ]);
     }
 

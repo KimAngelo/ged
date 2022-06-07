@@ -483,11 +483,6 @@ class Admin extends Controller
                 echo json_encode($json);
                 return;
             }
-            if (isset($data['sign'])) {
-                $user->sign = 1;
-            } else {
-                $user->sign = 0;
-            }
             $roles = (new Roles())->arrayRoles();
             if (!isset($data['roles'])) {
                 $json['message'] = $this->message->warning("Selecione os módulos de acesso do usuário")->render();
@@ -514,6 +509,8 @@ class Admin extends Controller
             $user->admin = $data['admin'];
             $user->roles = implode(';', $data['roles']);
             $user->companies = implode(';', $data['companies']);
+            $user->sign = isset($data['sign']) ? 1 : 0;
+            $user->delete_document = isset($data['delete_document']) ? 1 : 0;
             if ($user->save()) {
                 $user_company = (new UserCompany())->find('id_user = :id', "id={$user->id}")->fetch(true);
                 //Busca relações anteriores e apaga

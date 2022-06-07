@@ -130,6 +130,14 @@
                                                        href="#">Enviar por e-mail</a>
                                                 </div>
                                             </div>
+
+                                            <?php if ($delete_document): ?>
+                                                <button type="button" data-toggle="modal" title="Excluir documento"
+                                                        data-target="#delete_<?= $report->id ?>"
+                                                        class="btn btn-danger font-weight-bold btn-sm">
+                                                    <i class="far fa-trash-alt"></i>
+                                                </button>
+                                            <?php endif; ?>
                                         </div>
                                     </th>
                                 </tr>
@@ -187,6 +195,31 @@
             </div>
         </div>
     </div>
+
+    <?php if ($delete_document): ?>
+        <div class="modal fade" id="delete_<?= $report->id ?>" tabindex="-1" role="dialog"
+             aria-labelledby="exampleModalLabel"
+             aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Excluir documento</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <i aria-hidden="true" class="ki ki-close"></i>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Tem certeza que deseja excluir definitivamente este documento?</p>
+                        <form action="" method="post" class="form">
+                            <input type="hidden" name="action" value="delete">
+                            <input type="hidden" name="document" value="<?= $report->id ?>">
+                            <button type="submit" class="btn btn-danger">Sim, excluir!</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 <?php endforeach; endif; ?>
 <?php $v->start('scripts'); ?>
 <script>
